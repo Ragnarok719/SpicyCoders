@@ -1,6 +1,6 @@
 package data;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class CheckOut {
 
