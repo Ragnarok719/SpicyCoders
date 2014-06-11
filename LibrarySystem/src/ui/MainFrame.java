@@ -18,6 +18,9 @@ import dbhelper.BookHelper;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.AbstractListModel;
 
 public class MainFrame extends JFrame {
 
@@ -69,12 +72,12 @@ public class MainFrame extends JFrame {
 		
 		lblWelcomeToSpicy = new JLabel("Welcome to Spicy Coders' Library System");
 		lblWelcomeToSpicy.setFont(new Font("Times New Roman", Font.BOLD, 36));
-		lblWelcomeToSpicy.setBounds(98, 61, 684, 67);
+		lblWelcomeToSpicy.setBounds(35, 10, 684, 67);
 		panelMain.add(lblWelcomeToSpicy);
 		
 		textFieldSearch = new JTextField();
 		textFieldSearch.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		textFieldSearch.setBounds(162, 226, 400, 40);
+		textFieldSearch.setBounds(104, 76, 480, 40);
 		panelMain.add(textFieldSearch);
 		textFieldSearch.setColumns(10);
 		
@@ -85,18 +88,32 @@ public class MainFrame extends JFrame {
 			}
 		});
 		btnSearch.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		btnSearch.setBounds(584, 226, 80, 40);
+		btnSearch.setBounds(594, 76, 80, 40);
 		panelMain.add(btnSearch);
 		
 		btnLibrarianEntrance = new JButton("Librarian Entrance");
 		btnLibrarianEntrance.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		btnLibrarianEntrance.setBounds(402, 320, 160, 40);
+		btnLibrarianEntrance.setBounds(719, 29, 160, 40);
 		panelMain.add(btnLibrarianEntrance);
 		
 		buttonAdvanced = new JButton("Advanced Search");
 		buttonAdvanced.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonAdvanced.setBounds(190, 320, 160, 40);
+		buttonAdvanced.setBounds(719, 76, 160, 40);
 		panelMain.add(buttonAdvanced);
+		
+		JList listSearchResult = new JList();
+		listSearchResult.setModel(new AbstractListModel() {
+			String[] values = new String[] {"ISBN", "Title"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		listSearchResult.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listSearchResult.setBounds(10, 126, 869, 406);
+		panelMain.add(listSearchResult);
 		
 		panelLibrarian = new JPanel();
 		tabbedPaneMain.addTab("Librarian", null, panelLibrarian, null);
