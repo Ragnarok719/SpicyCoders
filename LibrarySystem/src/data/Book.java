@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+
 public class Book {
 
 	private long isbn;
@@ -10,6 +12,9 @@ public class Book {
 	private int publishYear;
 	private int idNumber;
 	private String typeName;
+	private ArrayList<Author> author;
+	private ArrayList<Publisher> publisher;
+	private ArrayList<SearchGenre> searchGenre;
 	
 	public long getIsbn() {
 		return isbn;
@@ -58,6 +63,24 @@ public class Book {
 	}
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
+	}
+	public ArrayList<Author> getAuthor() {
+		return author;
+	}
+	public void setAuthor(ArrayList<Author> author) {
+		this.author = author;
+	}
+	public ArrayList<Publisher> getPublisher() {
+		return publisher;
+	}
+	public void setPublisher(ArrayList<Publisher> publisher) {
+		this.publisher = publisher;
+	}
+	public ArrayList<SearchGenre> getSearchGenre() {
+		return searchGenre;
+	}
+	public void setSearchGenre(ArrayList<SearchGenre> searchGenre) {
+		this.searchGenre = searchGenre;
 	}
 
 }
