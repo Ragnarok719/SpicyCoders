@@ -1,11 +1,9 @@
 package dbhelper;
 
-import java.security.interfaces.RSAKey;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
@@ -87,8 +85,8 @@ public class CheckOutHelper {
 			statement = connect.createStatement();
 			
 			// Find the correct corresponding checkout by looking at the first due checkout of the book from the patron
-			String selectSQL = "SELECT * FROM CheckOut c WHERE c.isbn = ?, c.cardNumber = ?, "
-					+ "c.end <= ALL (SELECT end FROM CheckOut WHERE isbn = ?, cardnNumber = ?";
+			String selectSQL = "SELECT * FROM CheckOut c WHERE c.isbn = ? AND c.cardNumber = ? AND "
+					+ "c.end <= ALL (SELECT end FROM CheckOut WHERE isbn = ? AND cardNumber = ?";
 			
 			preparedStatement = connect.prepareStatement(selectSQL);
 			
