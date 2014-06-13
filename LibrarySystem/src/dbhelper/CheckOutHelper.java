@@ -11,7 +11,19 @@ import data.Book;
 
 public class CheckOutHelper {
 
+	/**
+	 * A patron rents a book from the library. checkOut method calculates the due date of the book
+	 * based on its type and stores the transaction in the database
+	 * @param b book the patron is renting
+	 * @param startTime the time of checkout
+	 * @param cardNumber card number of the patron who rents the book
+	 * @param idNumber ID number of the librarian who is performing the checkout
+	 */
 	protected void checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
+		
+		if(b == null){
+			return;
+		}
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -24,7 +36,7 @@ public class CheckOutHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			resultSet = statement.executeQuery("SELECT maxReservation FROM Book b, BookType t WHERE b.typeName = t.typeName");
+			resultSet = statement.executeQuery("SELECT maxReservation FROM BookType WHERE typeName = " + b.getTypeName());
 			
 			// Get the first result (max number of days for the rental) of the query
 			if(resultSet.next()){
@@ -60,11 +72,18 @@ public class CheckOutHelper {
 			finally
 			{
 				try {
-					
-					// close the connection to the database
+
+					if(connect != null){
 					connect.close();
+					}
+					
+					if(statement != null){
 					statement.close();
+					}
+					
+					if(resultSet != null){
 					resultSet.close();
+					}
 					
 				} catch (Exception e) {	
 					
@@ -72,6 +91,13 @@ public class CheckOutHelper {
 			}
 	}
 	
+	/**
+	 * A patron returns a book to the library. returnBook method finds the checkout record for the book,
+	 * records the return transaction in the database and charges the patron with the late fee if the book is overdue.
+	 * @param isbn ISBN of the book being returned
+	 * @param patronNum card number of the patron who rents the book
+	 * @param returnID ID number of the librarian who is performing the return
+	 */
 	protected void returnBook(int isbn, int patronNum, int returnID) throws Exception{
 		
 		Connection connect = null;
@@ -176,10 +202,18 @@ public class CheckOutHelper {
 			{
 				try {
 					
-					// close the connection to the database
+					if(connect != null){
 					connect.close();
+					}
+					
+					if(statement != null){
 					statement.close();
+					}
+					
+					if(resultSet != null){
 					resultSet.close();
+					}
+					
 					
 				} catch (Exception e) {	
 					
