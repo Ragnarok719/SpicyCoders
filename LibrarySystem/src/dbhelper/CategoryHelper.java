@@ -3,6 +3,7 @@ package dbhelper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import data.Category;
@@ -113,5 +114,45 @@ public class CategoryHelper {
 					st.close();
 			} catch (Exception e) {	}
 		}
+	}
+	
+	/**
+	 * Gets a category by its id
+	 * @param idNumber the id
+	 * @return the category with matching id or null if none match
+	 */
+	protected Category getCategory(int idNumber) {
+		Category ret = null;
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			rs = st.executeQuery("SELECT * FROM Category WHERE idNumber = " + idNumber);
+			if(rs.next()) {
+				ret = new Category();
+				ret.setIdNumber(rs.getInt("idNumber"));
+				ret.setSuperCategoryId(rs.getInt("superCategoryId"));
+				ret.setName(rs.getString("name"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
 	}
 }
