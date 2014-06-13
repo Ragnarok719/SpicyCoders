@@ -57,7 +57,7 @@ public class BookHelper {
 				b.setDescription(rs.getString(3));
 				b.setCurrentQuantity(rs.getInt(4));
 				b.setTotalQuantity(rs.getInt(5));
-				b.setPublishYear(rs.getInt(6));
+				b.setPublishYear((Integer)rs.getObject(6));
 				b.setTypeName(rs.getString(7));
 				b.setIdNumber(rs.getInt(8));
 				found.add(b);
@@ -113,7 +113,7 @@ public class BookHelper {
 			ps.setString(3, b.getDescription());
 			ps.setInt(4, b.getCurrentQuantity());
 			ps.setInt(5, b.getTotalQuantity());
-			ps.setInt(6, b.getPublishYear());
+			ps.setObject(6, b.getPublishYear());
 			ps.setString(7, b.getTypeName());
 			ps.setInt(8, b.getIdNumber());
 			ps.executeUpdate();
