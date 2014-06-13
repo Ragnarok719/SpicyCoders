@@ -1,6 +1,7 @@
 package dbhelper;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -57,19 +58,17 @@ public class BookHelperTest {
 		assertTrue(res.get(0).equals(harry));
 	}
 
-	//TODO ensure this adds and removes from relationships properly
+
 	@Test
 	public void testAddBook() {
 		//Remove any test books
 		bh.deleteBook(-1);
 
+		//Add book and compare
 		bh.addBook(b);
 		ArrayList<Book> found = bh.keywordSearch("Test");
 		assertTrue(found.size() == 1);
-		assertTrue(found.get(0).getDescription().equals("Test book pls ignore"));
-		assertTrue(found.get(0).getAuthor().size() == harry.getAuthor().size());
-		assertTrue(found.get(0).getPublisher().size() == harry.getPublisher().size());
-		assertTrue(found.get(0).getSearchGenre().size() == harry.getSearchGenre().size());
+		assertTrue(found.get(0).equals(b));
 
 		//Remove from the books
 		bh.deleteBook(-1);
@@ -77,19 +76,25 @@ public class BookHelperTest {
 
 	@Test
 	public void testUpdateBook() {
-		
+		//Remove any test books
 		bh.deleteBook(-1);
-		
+
+		//Add a book that must be updated
 		Book empty = new Book();
 		empty.setIsbn(-1);
 		empty.setIdNumber(6);
 		empty.setTypeName("Children's Fiction");
+		//Add a relationship that shouldn't be changed
 		empty.setAuthor(harry.getAuthor());
 		bh.addBook(empty);
+
+		//Update the book and test for equality
 		bh.updateBook(b);
 		ArrayList<Book> found = bh.keywordSearch("Test");
 		assertTrue(found.size() == 1);
 		assertTrue(found.get(0).equals(b));
+
+		//Delete test book
 		bh.deleteBook(-1);
 	}
 
@@ -101,18 +106,22 @@ public class BookHelperTest {
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
+
+			//Delete any test books
 			bh.deleteBook(-1);
+
+			//Add a test book to be deleted and ensure it is added
 			bh.addBook(b);
 			assertTrue(bh.keywordSearch("Test").get(0).getIsbn() == -1);
 
+			//Delete book and ensure that the relationships were deleted
 			bh.deleteBook(-1);
 			assertTrue(bh.keywordSearch("Test").size() == 0);
 			assertTrue(bh.getAuthors(-1, st, rs).size() == 0);
 			assertTrue(bh.getPublishers(-1, st, rs).size() == 0);
 			assertTrue(bh.getSearchGenres(-1, st, rs).size() == 0);
 		}catch (Exception e) {
-			System.out.println(e.getMessage());
-			assertTrue(false);
+			fail("Caught exception:" + e.getMessage());
 		}
 		finally
 		{
@@ -133,17 +142,32 @@ public class BookHelperTest {
 		Statement st = conn.createStatement();
 		ResultSet rs = null;
 
-		//Unmatched isbn
-		ArrayList<Author> auths = bh.getAuthors(0L, st, rs);
-		assertTrue(auths.size() == 0);
+		try {
+			//Unmatched isbn
+			ArrayList<Author> auths = bh.getAuthors(0L, st, rs);
+			assertTrue(auths.size() == 0);
 
-		//Matched isbn with one author
-		auths = bh.getAuthors(9780439064873L, st, rs);
-		assertTrue(auths.size() == 1);
+			//Matched isbn with one author
+			auths = bh.getAuthors(9780439064873L, st, rs);
+			assertTrue(auths.size() == 1);
 
-		//Matched isbn with multiple authors
-		auths = bh.getAuthors(9780321834843L, st, rs);
-		assertTrue(auths.size() == 3);
+			//Matched isbn with multiple authors
+			auths = bh.getAuthors(9780321834843L, st, rs);
+			assertTrue(auths.size() == 3);
+		}catch (Exception e) {
+			fail("Caught exception:" + e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
 	}
 
 	@Test
@@ -152,13 +176,28 @@ public class BookHelperTest {
 		Statement st = conn.createStatement();
 		ResultSet rs = null;
 
-		//Unmatched isbn
-		ArrayList<Publisher> pubs = bh.getPublishers(0L, st, rs);
-		assertTrue(pubs.size() == 0);
+		try {
+			//Unmatched isbn
+			ArrayList<Publisher> pubs = bh.getPublishers(0L, st, rs);
+			assertTrue(pubs.size() == 0);
 
-		//Matched isbn with one publisher
-		pubs = bh.getPublishers(9780545139700L, st, rs);
-		assertTrue(pubs.size() == 1);
+			//Matched isbn with one publisher
+			pubs = bh.getPublishers(9780545139700L, st, rs);
+			assertTrue(pubs.size() == 1);
+		}catch (Exception e) {
+			fail("Caught exception:" + e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
 	}
 
 	@Test
@@ -167,13 +206,28 @@ public class BookHelperTest {
 		Statement st = conn.createStatement();
 		ResultSet rs = null;
 
-		//Unmatched isbn
-		ArrayList<SearchGenre> auths = bh.getSearchGenres(0L, st, rs);
-		assertTrue(auths.size() == 0);
+		try {
+			//Unmatched isbn
+			ArrayList<SearchGenre> auths = bh.getSearchGenres(0L, st, rs);
+			assertTrue(auths.size() == 0);
 
-		//Matched isbn with one search genre
-		auths = bh.getSearchGenres(9780439064873L, st, rs);
-		assertTrue(auths.size() == 1);
+			//Matched isbn with one search genre
+			auths = bh.getSearchGenres(9780439064873L, st, rs);
+			assertTrue(auths.size() == 1);
+		}catch (Exception e) {
+			fail("Caught exception:" + e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
 	}
 
 }
