@@ -29,7 +29,7 @@ public class CategoryHelper {
 				ps = conn.prepareStatement("INSERT INTO Category(idNumber,name,superCategoryId) VALUES(?,?,?)");
 				ps.setInt(1, c.getIdNumber());
 				ps.setString(2, c.getName());
-				ps.setInt(3, c.getSuperCategoryId());
+				ps.setObject(3, c.getSuperCategoryId());
 			} else {
 				ps = conn.prepareStatement("INSERT INTO Category(idNumber,name,superCategoryId) VALUES(?,?)");
 				ps.setString(1, c.getName());
@@ -134,7 +134,7 @@ public class CategoryHelper {
 			if(rs.next()) {
 				ret = new Category();
 				ret.setIdNumber(rs.getInt("idNumber"));
-				ret.setSuperCategoryId(rs.getInt("superCategoryId"));
+				ret.setSuperCategoryId((Integer)rs.getObject("superCategoryId"));
 				ret.setName(rs.getString("name"));
 			}
 
