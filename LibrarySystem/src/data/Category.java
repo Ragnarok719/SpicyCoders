@@ -3,8 +3,8 @@ package data;
 public class Category {
 
 	private String name;
-	private int idNumber;
-	private int superCategoryId;
+	private Integer idNumber;
+	private Integer superCategoryId;
 	
 	public String getName() {
 		return name;
@@ -12,16 +12,16 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getIdNumber() {
+	public Integer getIdNumber() {
 		return idNumber;
 	}
-	public void setIdNumber(int idNumber) {
+	public void setIdNumber(Integer idNumber) {
 		this.idNumber = idNumber;
 	}
-	public int getSuperCategoryId() {
+	public Integer getSuperCategoryId() {
 		return superCategoryId;
 	}
-	public void setSuperCategoryId(int superCategoryId) {
+	public void setSuperCategoryId(Integer superCategoryId) {
 		this.superCategoryId = superCategoryId;
 	}	
 	
