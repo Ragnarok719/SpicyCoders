@@ -3,7 +3,6 @@ package dbhelper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Statement;
 
 import data.Category;
@@ -59,7 +58,6 @@ public class CategoryHelper {
 	protected void updateCategory(int idNumber, Category c) {
 		Connection conn = null;
 		Statement st = null;
-		ResultSet rs = null;
 
 		//Do nothing if category is not properly instantiated
 		if(c == null || c.getIdNumber() == null)
@@ -68,10 +66,10 @@ public class CategoryHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
-			rs = st.executeQuery("UPDATE Category SET name '" + c.getName() + "' WHERE idNumber = " + idNumber);
-			rs = st.executeQuery("UPDATE Category SET superCategoryId " + c.getSuperCategoryId() + " WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET name '" + c.getName() + "' WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET superCategoryId " + c.getSuperCategoryId() + " WHERE idNumber = " + idNumber);
 			//Update idNumber last
-			rs = st.executeQuery("UPDATE Category SET idNumber " + c.getIdNumber() + " WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET idNumber " + c.getIdNumber() + " WHERE idNumber = " + idNumber);
 
 
 		} catch (Exception e) {
@@ -84,8 +82,6 @@ public class CategoryHelper {
 					conn.close();
 				if(st != null)
 					st.close();
-				if(rs != null)
-					rs.close();
 			} catch (Exception e) {	}
 		}
 	}
@@ -102,7 +98,7 @@ public class CategoryHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
-			st.executeQuery("DELETE FROM Category WHERE idNumber = " + idNumber);
+			st.executeUpdate("DELETE FROM Category WHERE idNumber = " + idNumber);
 
 
 		} catch (Exception e) {
