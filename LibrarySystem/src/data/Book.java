@@ -9,7 +9,7 @@ public class Book {
 	private String description;
 	private int currentQuantity;
 	private int totalQuantity;
-	private int publishYear;
+	private Integer publishYear;
 	private int idNumber;
 	private String typeName;
 	private ArrayList<Author> author;
@@ -46,10 +46,10 @@ public class Book {
 	public void setTotalQuantity(int totalQuantity) {
 		this.totalQuantity = totalQuantity;
 	}
-	public int getPublishYear() {
+	public Integer getPublishYear() {
 		return publishYear;
 	}
-	public void setPublishYear(int publishYear) {
+	public void setPublishYear(Integer publishYear) {
 		this.publishYear = publishYear;
 	}
 	public int getIdNumber() {
