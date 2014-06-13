@@ -67,10 +67,10 @@ public class CategoryHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
-			st.executeUpdate("UPDATE Category SET name '" + c.getName() + "' WHERE idNumber = " + idNumber);
-			st.executeUpdate("UPDATE Category SET superCategoryId " + c.getSuperCategoryId() + " WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET name = '" + c.getName() + "' WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET superCategoryId = " + c.getSuperCategoryId() + " WHERE idNumber = " + idNumber);
 			//Update idNumber last
-			st.executeUpdate("UPDATE Category SET idNumber " + c.getIdNumber() + " WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET idNumber = " + c.getIdNumber() + " WHERE idNumber = " + idNumber);
 
 
 		} catch (Exception e) {
