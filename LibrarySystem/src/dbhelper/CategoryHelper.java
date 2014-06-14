@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import data.Category;
 
@@ -136,6 +137,47 @@ public class CategoryHelper {
 				ret.setIdNumber(rs.getInt("idNumber"));
 				ret.setSuperCategoryId((Integer)rs.getObject("superCategoryId"));
 				ret.setName(rs.getString("name"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Gets direct child categories by id of their parent category. Does not search deeper recursively.
+	 * @param idNumber id of parent category
+	 * @return list of direct child categories who have the same parent category id or an empty arraylist if none
+	 */
+	protected ArrayList<Category> getChildCategories(int idNumber) {
+		ArrayList<Category> ret = new ArrayList<Category>();
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			rs = st.executeQuery("SELECT * FROM Category WHERE superCategoryId = " + idNumber);
+			while(rs.next()) {
+				Category c = new Category();
+				c.setIdNumber(rs.getInt("idNumber"));
+				c.setName(rs.getString("name"));
+				c.setSuperCategoryId((Integer)rs.getObject("superCategoryId"));
+				ret.add(c);
 			}
 
 		} catch (Exception e) {
