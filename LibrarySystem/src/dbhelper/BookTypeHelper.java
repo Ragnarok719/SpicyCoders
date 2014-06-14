@@ -3,6 +3,7 @@ package dbhelper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import data.BookType;
@@ -54,9 +55,9 @@ public class BookTypeHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
-			st.executeUpdate("UPDATE bookType SET maxReservation " + bt.getMaxReservation() + " WHERE typeName = '" + typeName + "'");
-			st.executeUpdate("UPDATE bookType SET overdueFee " + bt.getOverdueFee() + " WHERE typeName = '" + typeName + "'");
-			st.executeUpdate("UPDATE bookType SET typeName " + bt.getTypeName() + " WHERE typeName = '" + typeName + "'");
+			st.executeUpdate("UPDATE bookType SET maxReservation = " + bt.getMaxReservation() + " WHERE typeName = '" + typeName + "'");
+			st.executeUpdate("UPDATE bookType SET overdueFee = " + bt.getOverdueFee() + " WHERE typeName = '" + typeName + "'");
+			st.executeUpdate("UPDATE bookType SET typeName = '" + bt.getTypeName() + "' WHERE typeName = '" + typeName + "'");
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -99,5 +100,47 @@ public class BookTypeHelper {
 					st.close();
 			} catch (Exception e) {	}
 		}
+	}
+	
+	/**
+	 * Gets a book type by name
+	 * @param typeName the name
+	 * @return the book type with the same name or null if none found
+	 */
+	protected BookType getBookType(String typeName) {
+		BookType ret = null;
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			//Select the book type
+			rs = st.executeQuery("SELECT * FROM BookType WHERE typeName = '" + typeName + "'");
+			if(rs.next()) {
+				//Fill fields of the book type
+				ret = new BookType();
+				ret.setTypeName(rs.getString("typeName"));
+				ret.setMaxReservation(rs.getInt("maxReservation"));
+				ret.setOverdueFee(rs.getInt("overdueFee"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
 	}
 }
