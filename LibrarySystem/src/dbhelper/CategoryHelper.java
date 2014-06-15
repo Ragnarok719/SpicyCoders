@@ -16,7 +16,7 @@ public class CategoryHelper {
 	 * If idNumber is null, the category will let the DBMS generate the next highest idNumber
 	 * @param c given category
 	 */
-	protected void addCategory(Category c) {
+	public void addCategory(Category c) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		//Do nothing if category is not properly instantiated
@@ -57,7 +57,7 @@ public class CategoryHelper {
 	 * @param idNumber the old category's id
 	 * @param c the updated category
 	 */
-	protected void updateCategory(int idNumber, Category c) {
+	public void updateCategory(int idNumber, Category c) {
 		Connection conn = null;
 		Statement st = null;
 
@@ -92,7 +92,7 @@ public class CategoryHelper {
 	 * Deletes a category by its given id
 	 * @param idNumber given id
 	 */
-	protected void deleteCategory(int idNumber) {
+	public void deleteCategory(int idNumber) {
 		Connection conn = null;
 		Statement st = null;
 		
@@ -122,7 +122,7 @@ public class CategoryHelper {
 	 * @param idNumber the id
 	 * @return the category with matching id or null if none match
 	 */
-	protected Category getCategory(int idNumber) {
+	public Category getCategory(int idNumber) {
 		Category ret = null;
 		Connection conn = null;
 		Statement st = null;
@@ -162,7 +162,7 @@ public class CategoryHelper {
 	 * @param idNumber id of parent category
 	 * @return list of direct child categories who have the same parent category id or an empty arraylist if none
 	 */
-	protected ArrayList<Category> getChildCategories(int idNumber) {
+	public ArrayList<Category> getChildCategories(int idNumber) {
 		ArrayList<Category> ret = new ArrayList<Category>();
 		Connection conn = null;
 		Statement st = null;

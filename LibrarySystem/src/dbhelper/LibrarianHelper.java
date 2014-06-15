@@ -12,7 +12,7 @@ import data.Librarian;
 
 public class LibrarianHelper {
 	
-	protected void addLibrarian(Librarian l) {
+	public void addLibrarian(Librarian l) {
 		Connection conn =null;
 		PreparedStatement pSt=null;
 		try {			
@@ -37,7 +37,7 @@ public class LibrarianHelper {
 		}
 	}
 	
-	protected ArrayList<Librarian> searchLibrarian(String columnName, String cond) {
+	public ArrayList<Librarian> searchLibrarian(String columnName, String cond) {
 		Connection conn = null;
 		Statement st=null;
 		ResultSet rs=null;
@@ -80,7 +80,7 @@ public class LibrarianHelper {
 		return Librarians;
 	}
 	
-	protected void updateLibrarian(int idNumber, Librarian l) {
+	public void updateLibrarian(int idNumber, Librarian l) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
@@ -104,7 +104,7 @@ public class LibrarianHelper {
 		}
 	}
 	
-	protected void deleteLibrarian(int idNumber) {
+	public void deleteLibrarian(int idNumber) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
