@@ -11,6 +11,7 @@ import java.util.Map;
 
 import data.Book;
 import data.CheckOut;
+import data.HasPublisher;
 import data.Patron;
 
 public class reportHelper {
@@ -230,6 +231,72 @@ public class reportHelper {
 		
 	}
 
+	
+	/**
+	 * Method getTopPublisher returns the name(s) of the top publisher(s). A top
+	 * publisher in this case means that the publisher has the highest number of
+	 * books in the library.
+	 * 
+	 */	
+	public HashMap<String, Integer> getTopPublisher() throws Exception{
+		
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		HashMap<String, Integer> topPublishersMap = new HashMap<String, Integer>();
+		
+		try {
+			
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			resultSet = statement.executeQuery("SELECT HP.name, COUNT(*) "
+					+ "FROM Book B, HasPublisher HP "
+					+ "WHERE B.isbn = HP.isbn "
+					+ "GROUP BY HP.name "
+					+ "HAVING COUNT(*) >= ALL (SELECT COUNT(*) "
+										   + "FROM Book B1, HasPublisher HP1"
+										   + "WHERE B1.isbn = HP1.isbn"
+										   + "GROUP BY HP1.name");
+			
+			// Add genres and their counts into collection genreMap one at a time
+			while(resultSet.next()){
+				
+				topPublishersMap.put(resultSet.getString(1), resultSet.getInt(2));
+				
+			}
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(statement != null){
+						statement.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		
+		return topPublishersMap;		
+		
+	}
+	
 	
 	/**
 	 * Method getOutofStockBooks returns titles of the books that are not available (out of stock)
