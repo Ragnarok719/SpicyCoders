@@ -19,7 +19,7 @@ public class CheckOutHelper {
 	 * @param cardNumber card number of the patron who rents the book
 	 * @param idNumber ID number of the librarian who is performing the checkout
 	 */
-	protected void checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
+	public void checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
 		
 		if(b == null){
 			return;
@@ -98,7 +98,7 @@ public class CheckOutHelper {
 	 * @param patronNum card number of the patron who rents the book
 	 * @param returnID ID number of the librarian who is performing the return
 	 */
-	protected void returnBook(int isbn, int patronNum, int returnID) throws Exception{
+	public void returnBook(int isbn, int patronNum, int returnID) throws Exception{
 		
 		Connection connect = null;
 		Statement statement = null;

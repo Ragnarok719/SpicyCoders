@@ -11,6 +11,7 @@ import java.util.Map;
 
 import data.Book;
 import data.CheckOut;
+import data.Patron;
 
 public class reportHelper {
 
@@ -26,7 +27,7 @@ public class reportHelper {
 	 * @param endDate date that goes after those of the checkouts
 	 * 
 	 */
-	protected ArrayList<CheckOut> getAllCheckOuts(Timestamp startDate, Timestamp endDate) throws Exception {
+	public ArrayList<CheckOut> getAllCheckOuts(Timestamp startDate, Timestamp endDate) throws Exception {
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -45,10 +46,9 @@ public class reportHelper {
 			
 			// Get all the checkouts in the resultSet
 			// the start timestamp must be within the startDate and the endDate
-			resultSet = statement.executeQuery("SELECT DISTINCT B.isbn, NRC.start, NRC.end, P.cardNumber, L.idNumber "
-					+ "FROM Book B, NoReturnCheckOut NRC, Patron P, Librarian L WHERE B.isbn = NRC.isbn, and "
-					+ "B.idNumber = L.idNumber, and start > " + startDate + " and start < " + endDate
-					+ "and NRC.cardNumber = P.cardNumber, and NRC.idNumber = L.idNumber "
+			resultSet = statement.executeQuery("SELECT * "
+					+ "FROM NoReturnCheckOut NRC "
+					+ "WHERE NRC.start > " + startDate + " and NRC.start < " + endDate + " "
 					+ "ORDER BY NRC.start desc");
 
 			// Add all checkouts in the resultSet into the ArrayList, checkOutLIst
@@ -98,7 +98,7 @@ public class reportHelper {
 	 * checked out and a count for each genre. The counts are in decreasing order.
 	 */		
 	
-	protected Map<String, Integer> getGenreCounts() throws Exception {
+	public Map<String, Integer> getGenreCounts() throws Exception {
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -164,7 +164,7 @@ public class reportHelper {
 	 * method retrieves all the overdue checkouts. 
 	 */		
 	
-	protected ArrayList<CheckOut> getOverdueCO(Timestamp currentTime, int numDays) throws Exception{
+	public ArrayList<CheckOut> getOverdueCO(Timestamp currentTime, int numDays) throws Exception{
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -180,8 +180,7 @@ public class reportHelper {
 			
 			createCheckOutView();
 			
-			long oneDay = 1 * 24 * 60 * 60 * 1000;
-			
+			long oneDay = 1 * 24 * 60 * 60 * 1000;			
 				
 			resultSet = statement.executeQuery("SELECT *,  "
 					  + "FROM NoReturnCheckOut NRC "
@@ -230,14 +229,165 @@ public class reportHelper {
 		return overdueCOList;
 		
 	}
+
 	
+	/**
+	 * Method getOutofStockBooks returns titles of the books that are not available (out of stock)
+	 * at the library. e.g. simply checks if the current quantity is equal to 0.
+	 * 
+	 */	
+	public ArrayList<String> getOutofStockBooks() throws Exception{
+		
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		ArrayList<String> outOfStockBooks = new ArrayList<String>();
+		
+		try {
+			
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			resultSet = statement.executeQuery("SELECT DISTINCT title"
+					+ "FROM Book "
+					+ "WHERE currentQuantity = 0");
+			
+			// Add genres and their counts into collection genreMap one at a time
+			while(resultSet.next()){
+				
+				outOfStockBooks.add(resultSet.getString(1));
+				
+			}
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(statement != null){
+						statement.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		
+		return outOfStockBooks;
+	}
+	
+
+	/**
+	 * Method getSuperPatrons returns a list of patrons who have checked out all the books
+	 * in the array which is provided as an argument to the method
+	 * 
+	 * @param isbnArray a collection of ISBNs
+	 */	
+	
+	public ArrayList<Patron> getSuperPatrons(Book[] bookArray) throws Exception{
+		
+		// if there are no elements in the array then we do not return anything
+		if(bookArray == null){
+			return null;
+		}
+		
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		ArrayList<Patron> superPatrons = new ArrayList<Patron>();
+		
+		try {
+			
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			
+			//Create where clause to append all the ISBNs of the books
+			StringBuilder whereClause = new StringBuilder("isbn = " + bookArray[0].getIsbn() + " ");
+			for(int i = 1; i < bookArray.length; i++) {
+				whereClause.append(" OR isbn = "+ bookArray[i]);
+			}
+			
+			
+			// Create a view that only 
+			statement.executeQuery("CREATE VIEW TempBook(isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName) AS "
+					              + "SELECT isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName "
+					              + "FROM Book "
+					              + "WHERE " + whereClause.toString());
+			
+			resultSet = statement.executeQuery("SELECT * "
+					  						  + "FROM Patron P "
+					  						  + "WHERE NOT EXISTS "
+					  						  + "((SELECT T.isbn "
+					  						  + "FROM TempBook T) "
+					  						  + "EXCEPT "
+					  						  + "(SELECT C.isbn "
+					  						  + "FROM CheckOut C "
+					  						  + "WHERE C.cardNumber = P.cardNumber))");
+				
+			
+			// Add all the patrons in the resultSet into the ArrayList, superPatrons
+			while(resultSet.next()){
+				
+				Patron p = new Patron();
+				p.setCardNumber(resultSet.getInt(1));
+				p.setName(resultSet.getString(2));
+				p.setPhone(resultSet.getInt(3));
+				p.setAddress(resultSet.getString(4));
+				p.setUpaidFees(resultSet.getInt(5));
+				superPatrons.add(p);
+				
+			}
+			
+		} catch (Exception e) {
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(statement != null){
+						statement.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		
+		return superPatrons;
+	}
 	
 	/**
 	 * createCheckOutView is a helper method that creates a view of checkouts
 	 * for which there are no corresponding returns
 	 */	
 	
-	protected static void createCheckOutView() throws Exception{
+	public static void createCheckOutView() throws Exception{
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -250,7 +400,7 @@ public class reportHelper {
 			statement = connect.createStatement();
 			
 			// Create a view that only retains checkouts for which there are no corresponding returns
-			statement.executeQuery("CREATE VIEW NoReturnCheckOut(isbn, start, end, cardNumber, idNumber AS"
+			statement.executeQuery("CREATE VIEW NoReturnCheckOut(isbn, start, end, cardNumber, idNumber) AS "
 					              + "SELECT isbn, start, end, cardNumber, idNumber FROM CheckOut"
 					              + " EXCEPT (SELECT isbn, start, end, cardNumber, checkouId FROM Return)");
 			
