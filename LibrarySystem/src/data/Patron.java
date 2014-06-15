@@ -6,7 +6,7 @@ public class Patron {
 	private String name;
 	private int phone;
 	private String address;
-	private int upaidFees;
+	private int unpaidFees;
 	
 	public int getCardNumber() {
 		return cardNumber;
@@ -32,11 +32,11 @@ public class Patron {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public int getUpaidFees() {
-		return upaidFees;
+	public int getUnpaidFees() {
+		return unpaidFees;
 	}
-	public void setUpaidFees(int upaidFees) {
-		this.upaidFees = upaidFees;
+	public void setUnpaidFees(int upaidFees) {
+		this.unpaidFees = upaidFees;
 	}
 	
 }

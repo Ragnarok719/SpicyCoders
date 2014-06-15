@@ -22,7 +22,7 @@ public class BookHelper {
 	 * @return the arraylist of books which have titles containing all the words OR
 	 * 		   null if not given any words
 	 */
-	protected ArrayList<Book> keywordSearch(String words) {
+	public ArrayList<Book> keywordSearch(String words) {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -94,7 +94,7 @@ public class BookHelper {
 	 * Adds a given book to the book table and the relationship tables for books
 	 * @param b given book
 	 */
-	protected void addBook(Book b) {
+	public void addBook(Book b) {
 		Connection conn = null;
 		Statement st = null;
 		PreparedStatement ps = null;
@@ -156,7 +156,7 @@ public class BookHelper {
 	 * Finds and updates book with same isbn to given values
 	 * @param b updated book
 	 */
-	protected void updateBook(Book b) {
+	public void updateBook(Book b) {
 		if(b != null)
 			updateBook(b.getIsbn(), b);
 	}
@@ -166,7 +166,7 @@ public class BookHelper {
 	 * @param isbn the old isbn
 	 * @param newBook book after updates
 	 */
-	protected void updateBook(long isbn, Book b) {
+	public void updateBook(long isbn, Book b) {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -253,7 +253,7 @@ public class BookHelper {
 	 * Deletes a given book from the book table and removes its relationships
 	 * @param b given book
 	 */
-	protected void deleteBook(Book b) {
+	public void deleteBook(Book b) {
 		if(b != null)
 			deleteBook(b.getIsbn());
 	}
@@ -262,7 +262,7 @@ public class BookHelper {
 	 * Deletes a given book by isbn from the book table and removes its relationships
 	 * @param b given book isbn
 	 */
-	protected void deleteBook(long isbn) {
+	public void deleteBook(long isbn) {
 		Connection conn = null;
 		Statement st = null;
 		try {

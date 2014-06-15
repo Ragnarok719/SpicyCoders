@@ -12,7 +12,7 @@ import data.Patron;
 
 public class PatronHelper {
 	
-	protected void addPatron(Patron p) {
+	public void addPatron(Patron p) {
 		Connection conn =null;
 		PreparedStatement pSt=null;
 		try {			
@@ -37,7 +37,7 @@ public class PatronHelper {
 		}
 	}
 	
-	protected ArrayList<Patron> searchPatron(String columnName, String cond) {
+	public ArrayList<Patron> searchPatron(String columnName, String cond) {
 		Connection conn = null;
 		Statement st=null;
 		ResultSet rs=null;
@@ -93,7 +93,7 @@ public class PatronHelper {
 		return patrons;
 	}
 	
-	protected void updatePatron(int cardNumber, Patron p) {
+	public void updatePatron(int cardNumber, Patron p) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
@@ -118,7 +118,7 @@ public class PatronHelper {
 		}
 	}
 	
-	protected void deletePatron(int cardNumber) {
+	public void deletePatron(int cardNumber) {
 		Connection conn =null;
 		Statement st = null;
 		try {			

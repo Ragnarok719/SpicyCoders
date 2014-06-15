@@ -14,7 +14,7 @@ public class BookTypeHelper {
 	 * Adds given book type to database
 	 * @param bt given book type
 	 */
-	protected void addBookType(BookType bt) {
+	public void addBookType(BookType bt) {
 		Connection conn = null;
 		PreparedStatement ps = null;
 		//Do nothing if book type is not properly instantiated
@@ -44,7 +44,7 @@ public class BookTypeHelper {
 		}
 	}
 	
-	protected void updateBookType(String typeName, BookType bt) {
+	public void updateBookType(String typeName, BookType bt) {
 		Connection conn = null;
 		Statement st = null;
 
@@ -77,7 +77,7 @@ public class BookTypeHelper {
 	 * Deletes a book type by its given name
 	 * @param typeName given name
 	 */
-	protected void deleteBookType(String typeName) {
+	public void deleteBookType(String typeName) {
 		Connection conn = null;
 		Statement st = null;
 		
@@ -107,7 +107,7 @@ public class BookTypeHelper {
 	 * @param typeName the name
 	 * @return the book type with the same name or null if none found
 	 */
-	protected BookType getBookType(String typeName) {
+	public BookType getBookType(String typeName) {
 		BookType ret = null;
 		Connection conn = null;
 		Statement st = null;
