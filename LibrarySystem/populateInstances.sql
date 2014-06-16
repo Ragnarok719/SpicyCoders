@@ -104,7 +104,7 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='Harry Potter and the Sorcerer\'s Stone'), (SELECT name FROM Author WHERE name='J.K. Rowling')),
 ((SELECT isbn FROM Book WHERE title='Harry Potter and the Chamber of Secrets'), (SELECT name FROM Author WHERE name='J.K. Rowling')),
 ((SELECT isbn FROM Book WHERE title='Harry Potter and the Deathly Hallows'), (SELECT name FROM Author WHERE name='J.K. Rowling')),
-((SELECT isbn FROM Book WHERE title='The Hobbit'), (SELECT name FROM Author WHERE name='J.R.R Tolkien'));
+((SELECT isbn FROM Book WHERE title='The Hobbit'), (SELECT name FROM Author WHERE name='J.R.R Tolkien')),
 ((SELECT isbn FROM Book WHERE title='Database Management Systems'), (SELECT name FROM Author WHERE name='Johannes Gehrke')),
 ((SELECT isbn FROM Book WHERE title='Database Management Systems'), (SELECT name FROM Author WHERE name='Raghu Ramakrishnan')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Author WHERE name='Scott Freeman')),

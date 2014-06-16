@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 import data.Book;
+import data.CheckOut;
 
 public class CheckOutHelper {
 
@@ -36,7 +37,7 @@ public class CheckOutHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			resultSet = statement.executeQuery("SELECT maxReservation FROM BookType WHERE typeName = " + b.getTypeName());
+			resultSet = statement.executeQuery("SELECT maxReservation FROM BookType WHERE typeName = '" + b.getTypeName() + "'");
 			
 			// Get the first result (max number of days for the rental) of the query
 			if(resultSet.next()){
@@ -66,6 +67,7 @@ public class CheckOutHelper {
 			
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -98,47 +100,35 @@ public class CheckOutHelper {
 	 * @param patronNum card number of the patron who rents the book
 	 * @param returnID ID number of the librarian who is performing the return
 	 */
-	public void returnBook(int isbn, int patronNum, int returnID) throws Exception{
+	public void returnBook(long isbn, int patronNum, int returnID) throws Exception{
 		
 		Connection connect = null;
-		Statement statement = null;
 		ResultSet resultSet = null;
 		PreparedStatement preparedStatement = null;
+		String selectSQL;
 		
 		try {
 			
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
-			statement = connect.createStatement();
 			
-			// Find the correct corresponding checkout by looking at the first due checkout of the book from the patron
-			String selectSQL = "SELECT * FROM CheckOut c WHERE c.isbn = ? AND c.cardNumber = ? AND "
-					+ "c.end <= ALL (SELECT end FROM CheckOut WHERE isbn = ? AND cardNumber = ?";
-			
-			preparedStatement = connect.prepareStatement(selectSQL);
-			
-			preparedStatement.setInt(1, isbn);
-			preparedStatement.setInt(2, patronNum);
-			preparedStatement.setInt(3, isbn);
-			preparedStatement.setInt(4, patronNum);
-			
-			resultSet = preparedStatement.executeQuery(selectSQL);
+			CheckOut co = getCorrespondingCheckOut(isbn, patronNum);
 			
 			// Only take the first due checkout if it exists
-			if(resultSet.next()){
+			if(co != null){
 				
 				 // Get the current time (return timestamp)
 				 java.util.Date date= new java.util.Date();
 				 Timestamp currentTime = new Timestamp(date.getTime());
 				
-				 Timestamp startTime = resultSet.getTimestamp("start");
-				 Timestamp endTime = resultSet.getTimestamp("end");
-				 int checkOutID = resultSet.getInt("idNumber");
+				 Timestamp startTime = new Timestamp(co.getStart().getTime());
+				 Timestamp endTime = new Timestamp(co.getEnd().getTime());
+				 int checkOutID = co.getIdNumber();
 				 
 				 preparedStatement = connect.prepareStatement("INSERT INTO Return " + 
 				 "(returned, isbn, start, end, cardNumber, checkoutId, returnId) " + "VALUES (?, ?, ?, ?, ?, ?, ?)");				 
 				 
 				 preparedStatement.setTimestamp(1, currentTime);
-				 preparedStatement.setInt(2, isbn);
+				 preparedStatement.setLong(2, isbn);
 				 preparedStatement.setTimestamp(3, startTime);
 				 preparedStatement.setTimestamp(4, endTime);
 				 preparedStatement.setInt(5, patronNum);
@@ -160,7 +150,7 @@ public class CheckOutHelper {
 					 // Get the book type
 					 selectSQL = "SELECT b.typeName FROM Book b WHERE b.isbn = ?";	
 					 preparedStatement = connect.prepareStatement(selectSQL);
-					 preparedStatement.setInt(1, isbn);
+					 preparedStatement.setLong(1, isbn);
 					 resultSet = preparedStatement.executeQuery(selectSQL);
 					 
 					 if(resultSet.next()){
@@ -195,6 +185,7 @@ public class CheckOutHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -204,10 +195,6 @@ public class CheckOutHelper {
 					
 					if(connect != null){
 					connect.close();
-					}
-					
-					if(statement != null){
-					statement.close();
 					}
 					
 					if(resultSet != null){
@@ -221,4 +208,90 @@ public class CheckOutHelper {
 			}
 		
 	}
+	
+	public CheckOut getCorrespondingCheckOut(long isbn, int patronNum) throws Exception {
+	
+		Connection connect = null;
+		ResultSet resultSet = null;
+		Statement statement = null;
+		CheckOut co = new CheckOut();
+		
+		try {
+			
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			resultSet = statement.executeQuery("SELECT * FROM CheckOut c WHERE c.isbn = " + isbn + " AND c.cardNumber = " + patronNum
+					+ " AND c.end <= ALL (SELECT end FROM CheckOut WHERE isbn = " + isbn + " AND cardNumber = " + patronNum + ")");
+			
+			if(resultSet.next()){
+				co.setIsbn(resultSet.getLong(1));
+				co.setStart(resultSet.getTimestamp(2));
+				co.setEnd(resultSet.getTimestamp(3));
+				co.setCardNumber(resultSet.getInt(4));
+				co.setIdNumber(resultSet.getInt(5));
+			} else {
+				return null;
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+					
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		
+		return co;
+	}
+
+	public void deleteCheckOut(long isbn, int patronNum, int idNumber) throws Exception {
+		
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		try {
+			
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			statement.executeUpdate("DELETE FROM CheckOut WHERE isbn = " + isbn + " and cardNumber = "
+									+ patronNum + " and idNumber = " + idNumber);
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+					
+					if(connect != null){
+						connect.close();
+					}
+					
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+	}	
+	
 }

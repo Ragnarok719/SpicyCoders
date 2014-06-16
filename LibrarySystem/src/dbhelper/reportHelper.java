@@ -66,6 +66,7 @@ public class reportHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -130,6 +131,7 @@ public class reportHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -203,6 +205,7 @@ public class reportHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -269,6 +272,7 @@ public class reportHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -329,6 +333,7 @@ public class reportHelper {
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -416,12 +421,13 @@ public class reportHelper {
 				p.setName(resultSet.getString(2));
 				p.setPhone(resultSet.getInt(3));
 				p.setAddress(resultSet.getString(4));
-				p.setUpaidFees(resultSet.getInt(5));
+				p.setUnpaidFees(resultSet.getInt(5));
 				superPatrons.add(p);
 				
 			}
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		
@@ -472,6 +478,7 @@ public class reportHelper {
 					              + " EXCEPT (SELECT isbn, start, end, cardNumber, checkouId FROM Return)");
 			
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		

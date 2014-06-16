@@ -110,4 +110,3 @@ CREATE TABLE Returns (
 	FOREIGN KEY (checkoutId) REFERENCES Librarian(idNumber),
 	FOREIGN KEY (returnId) REFERENCES Librarian(idNumber)
 );
-
