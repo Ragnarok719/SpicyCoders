@@ -12,9 +12,17 @@ import data.Librarian;
 
 public class LibrarianHelper {
 	
+	/** Add a new Librarian.
+	 * @param l Librarian object that has all values of new librarian
+	 */
 	public void addLibrarian(Librarian l) {
 		Connection conn =null;
 		PreparedStatement pSt=null;
+		
+		// If l is null, do nothing
+		if (l == null)
+			return;
+		
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			
@@ -37,16 +45,22 @@ public class LibrarianHelper {
 		}
 	}
 	
+	/** Get list of librarians that fulfill conditions; return all Librarians if parameters not specified
+	 * @param columnName attribute name
+	 * @param cond value that is being searched
+	 * @return Array list of librarians.
+	 */
 	public ArrayList<Librarian> searchLibrarian(String columnName, String cond) {
 		Connection conn = null;
 		Statement st=null;
 		ResultSet rs=null;
 		ArrayList<Librarian> Librarians = null;
 		
-		// If columnName and cond is not null, select specified tuples, otherwise, select all rows
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			String query = null;
+			
+			// If columnName and cond is not null, select specified tuples, otherwise, select all rows
 			if (columnName != null && cond != null) {
 				query = "SELECT * FROM Librarian WHERE " + columnName + " = '" + cond + "'";
 			} else {
@@ -80,6 +94,10 @@ public class LibrarianHelper {
 		return Librarians;
 	}
 	
+	/** Update a Librarian with new values.
+	 * @param idNumber identifier of librarian
+	 * @param l Librarian object with new values 
+	 */
 	public void updateLibrarian(int idNumber, Librarian l) {
 		Connection conn =null;
 		Statement st = null;
@@ -104,6 +122,9 @@ public class LibrarianHelper {
 		}
 	}
 	
+	/** Delete a librarian.
+	 * @param idNumber identifier
+	 */
 	public void deleteLibrarian(int idNumber) {
 		Connection conn =null;
 		Statement st = null;
