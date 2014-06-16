@@ -42,14 +42,12 @@ public class CheckOutHelper {
 			// Get the first result (max number of days for the rental) of the query
 			if(resultSet.next()){
 				
-				Timestamp endTime = startTime;
-				
 				int reserveLength = resultSet.getInt("maxReservation");
 				
 				long oneDay = 1 * 24 * 60 * 60 * 1000;
 				
 				// Calculate the return date of the book rental
-				endTime.setTime(endTime.getTime() + reserveLength * oneDay);
+				Timestamp endTime = new Timestamp(startTime.getTime() + reserveLength * oneDay);
 				
 				preparedStatement = connect.prepareStatement("INSERT INTO CheckOut " + 
 				"(isbn, start, end, cardNumber, idNumber) " + "VALUES (?, ?, ?, ?, ?)");
@@ -96,38 +94,36 @@ public class CheckOutHelper {
 	/**
 	 * A patron returns a book to the library. returnBook method finds the checkout record for the book,
 	 * records the return transaction in the database and charges the patron with the late fee if the book is overdue.
+	 * @param returnTime time at which the book is returned
 	 * @param isbn ISBN of the book being returned
 	 * @param patronNum card number of the patron who rents the book
 	 * @param returnID ID number of the librarian who is performing the return
 	 */
-	public void returnBook(long isbn, int patronNum, int returnID) throws Exception{
+	public void returnBook(Timestamp returnTime, long isbn, int patronNum, int returnID) throws Exception{
 		
 		Connection connect = null;
 		ResultSet resultSet = null;
+		Statement statement = null;
 		PreparedStatement preparedStatement = null;
-		String selectSQL;
 		
 		try {
 			
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
 			
 			CheckOut co = getCorrespondingCheckOut(isbn, patronNum);
 			
 			// Only take the first due checkout if it exists
 			if(co != null){
 				
-				 // Get the current time (return timestamp)
-				 java.util.Date date= new java.util.Date();
-				 Timestamp currentTime = new Timestamp(date.getTime());
-				
 				 Timestamp startTime = new Timestamp(co.getStart().getTime());
 				 Timestamp endTime = new Timestamp(co.getEnd().getTime());
 				 int checkOutID = co.getIdNumber();
 				 
-				 preparedStatement = connect.prepareStatement("INSERT INTO Return " + 
+				 preparedStatement = connect.prepareStatement("INSERT INTO Returns " + 
 				 "(returned, isbn, start, end, cardNumber, checkoutId, returnId) " + "VALUES (?, ?, ?, ?, ?, ?, ?)");				 
 				 
-				 preparedStatement.setTimestamp(1, currentTime);
+				 preparedStatement.setTimestamp(1, returnTime);
 				 preparedStatement.setLong(2, isbn);
 				 preparedStatement.setTimestamp(3, startTime);
 				 preparedStatement.setTimestamp(4, endTime);
@@ -138,30 +134,34 @@ public class CheckOutHelper {
 				 // Store the return transaction in the database
 				 preparedStatement.executeUpdate();
 				 
-				 long diff = currentTime.getTime() - endTime.getTime();
+				 double diff = returnTime.getTime() - endTime.getTime();
 				 
 				 // Check if the returned book is overdue and if it is, calculate the late fee
-				 if (diff > 0) {
+				 // timestamps do not seemed to be stored accurately and so some tolerance is allowed
+				 if (diff > 0.05) {
 					 
-					 long oneDay = 1 * 24 * 60 * 60 * 1000;
+					 double oneDay = 1 * 24 * 60 * 60 * 1000;
 					 
-					 int lateDays = (int) Math.ceil(diff / oneDay);
+					 double dLateDays = diff / oneDay;
+					 
+					 int lateDays;
+					 
+					 if(dLateDays - (int) dLateDays > 0.05){
+						 lateDays = (int) Math.ceil(dLateDays);
+					 } else{
+						 lateDays = (int) dLateDays;
+					 }
+					 
 					 
 					 // Get the book type
-					 selectSQL = "SELECT b.typeName FROM Book b WHERE b.isbn = ?";	
-					 preparedStatement = connect.prepareStatement(selectSQL);
-					 preparedStatement.setLong(1, isbn);
-					 resultSet = preparedStatement.executeQuery(selectSQL);
+					 resultSet = statement.executeQuery("SELECT typeName FROM Book WHERE isbn = " + isbn);
 					 
 					 if(resultSet.next()){
 						 
 						 String bookType = resultSet.getString("typeName");
 						 
 						 // Get the overdue fine per day
-						 selectSQL = "SELECT bt.typeName, bt.overdueFee FROM BookType bt WHERE bt.BookType = ?";	
-						 preparedStatement = connect.prepareStatement(selectSQL);
-						 preparedStatement.setString(1, bookType);
-						 resultSet = preparedStatement.executeQuery(selectSQL);
+						 resultSet = statement.executeQuery("SELECT typeName, overdueFee FROM BookType WHERE typeName = '" + bookType + "'");
 						 
 						 	if(resultSet.next()){
 						 		
@@ -170,7 +170,7 @@ public class CheckOutHelper {
 						 		
 						 		// Charge the patron with the late fee
 								preparedStatement = connect.prepareStatement("UPDATE Patron " + 
-								"SET unpaidFees = unpaidFees + ?" + 
+								"SET unpaidFees = unpaidFees + ? " + 
 								"WHERE cardNumber = ?");
 										
 								preparedStatement.setInt(1, lateFee);
@@ -201,6 +201,9 @@ public class CheckOutHelper {
 					resultSet.close();
 					}
 					
+					if(resultSet != null){
+					resultSet.close();
+					}
 					
 				} catch (Exception e) {	
 					
@@ -209,6 +212,13 @@ public class CheckOutHelper {
 		
 	}
 	
+	
+	/**
+	 * getCorrespoindingCheckOut returns the earliest checkout (lowest start timestamp) that has the isbn and patronNum 
+	 * which match those given as arguments to the method. If there are no checkouts returned then null is returned.
+	 * @param isbn ISBN of book
+	 * @param patronNum card number of a patron
+	 */
 	public CheckOut getCorrespondingCheckOut(long isbn, int patronNum) throws Exception {
 	
 		Connection connect = null;
@@ -260,11 +270,17 @@ public class CheckOutHelper {
 		return co;
 	}
 
+	
+	/**
+	 * deleteCheckOut deletes all the checkouts with the same isbn, patronNum and idNumber as the corresponding method arguments
+	 * @param isbn ISBN of book
+	 * @param patronNum card number of a patron
+	 * @param idNumber ID number of the librarian
+	 */
 	public void deleteCheckOut(long isbn, int patronNum, int idNumber) throws Exception {
 		
 		Connection connect = null;
 		Statement statement = null;
-		ResultSet resultSet = null;
 		
 		try {
 			
@@ -292,6 +308,47 @@ public class CheckOutHelper {
 					
 				}
 			}
-	}	
+	}
+	
+	/**
+	 * deleteReturn deletes all the returns with the same isbn, patronNum and checkIdNumber
+	 * and returnIdNumber as the corresponding method arguments
+	 * @param isbn ISBN of book
+	 * @param patronNum card number of a patron
+	 * @param checkIdNumber ID number of the librarian who performed checkout
+	 * @param returnIdNumber ID number of the librarian who performed return
+	 */
+	public void deleteReturn(long isbn, int patronNum, int checkIdNumber, int returnIdNumber) throws Exception {
+		
+		Connection connect = null;
+		Statement statement = null;
+		
+		try {
+			
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			statement.executeUpdate("DELETE FROM Returns WHERE isbn = " + isbn + " and cardNumber = "
+									+ patronNum + " and checkoutId = " + checkIdNumber + " and returnId = " + returnIdNumber);
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+					
+					if(connect != null){
+						connect.close();
+					}
+					
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+	}
 	
 }
