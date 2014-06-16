@@ -25,12 +25,13 @@ public class PatronHelper {
 		
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
-			String insert = "INSERT INTO Patron(name, phone, address, unpaidFees) VALUES (?, ?, ?, ?)";
+			String insert = "INSERT INTO Patron(cardNumber, name, phone, address, unpaidFees) VALUES (?, ?, ?, ?, ?)";
 			pSt = conn.prepareStatement(insert);	
-			pSt.setString(1, p.getName());
-			pSt.setInt(2, p.getPhone());
-			pSt.setString(3, p.getAddress());
-			pSt.setInt(4, p.getUnpaidFees());
+			pSt.setInt(1, p.getCardNumber());
+			pSt.setString(2, p.getName());
+			pSt.setInt(3, p.getPhone());
+			pSt.setString(4, p.getAddress());
+			pSt.setInt(5, p.getUnpaidFees());
 			pSt.executeUpdate();
 		} catch (SQLException e) {
 			e.getMessage();
@@ -110,10 +111,9 @@ public class PatronHelper {
 	}
 	
 	/** Updates all fields of a Patron except for cardNumber.
-	 * @param cardNumber identifier (not updated)
 	 * @param p Patron object that contains new values for Patron
 	 */
-	public void updatePatron(int cardNumber, Patron p) {
+	public void updatePatron(Patron p) {
 		Connection conn =null;
 		Statement st = null;
 		
@@ -126,11 +126,11 @@ public class PatronHelper {
 			st=conn.createStatement();
 			
 			
-			// Update all attributes except for cardNumber
-			st.executeUpdate("UPDATE Patron SET name = " + p.getName() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET phone = " + p.getPhone() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET address = " + p.getAddress() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET unpaidFees = " + p.getUnpaidFees() + "WHERE cardNumber = " + cardNumber);
+			// Update all attributes
+			st.executeUpdate("UPDATE Patron SET name = " + p.getName() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET phone = " + p.getPhone() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET address = " + p.getAddress() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET unpaidFees = " + p.getUnpaidFees() + "WHERE cardNumber = " + p.getCardNumber());
 			
 		} catch (SQLException e) {	
 			e.getMessage();

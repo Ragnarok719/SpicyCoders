@@ -27,10 +27,11 @@ public class LibrarianHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			
 			// Insert tuple into Librarian in which attributes are obtained from Librarian object p
-			String insert = "INSERT INTO Librarian(name, address) VALUES (?, ?)";
+			String insert = "INSERT INTO Librarian(idNumber, name, address) VALUES (?, ?, ?)";
 			pSt = conn.prepareStatement(insert);	
-			pSt.setString(1, l.getName());
-			pSt.setString(2, l.getAddress());
+			pSt.setInt(1, l.getIdNumber());
+			pSt.setString(2, l.getName());
+			pSt.setString(3, l.getAddress());
 			pSt.executeUpdate();
 		} catch (SQLException e) {
 			e.getMessage();
@@ -98,7 +99,7 @@ public class LibrarianHelper {
 	 * @param idNumber identifier of librarian
 	 * @param l Librarian object with new values 
 	 */
-	public void updateLibrarian(int idNumber, Librarian l) {
+	public void updateLibrarian(Librarian l) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
@@ -106,8 +107,8 @@ public class LibrarianHelper {
 			st=conn.createStatement();
 			
 			// Update each column of the Librarian specified by idNumber
-			st.executeUpdate("UPDATE Librarian SET name = " + l.getName() + "WHERE idNumber = " + idNumber);
-			st.executeUpdate("UPDATE Librarian SET address = " + l.getAddress() + "WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Librarian SET name = " + l.getName() + "WHERE idNumber = " + l.getIdNumber());
+			st.executeUpdate("UPDATE Librarian SET address = " + l.getAddress() + "WHERE idNumber = " + l.getIdNumber());
 			
 		} catch (SQLException e) {	
 			e.getMessage();
