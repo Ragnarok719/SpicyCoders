@@ -38,7 +38,7 @@ public class BookHelperTest {
 		//Setup relationships
 		harry = bh.keywordSearch("harry").get(0);
 		b.setAuthor(harry.getAuthor());
-		b.setPublisher(harry.getPublisher());
+		b.setPublisher(bh.keywordSearch("hobbit").get(0).getPublisher());
 		b.setSearchGenre(harry.getSearchGenre());
 	}
 
@@ -86,6 +86,7 @@ public class BookHelperTest {
 		empty.setTypeName("Children's Fiction");
 		//Add a relationship that shouldn't be changed
 		empty.setAuthor(harry.getAuthor());
+		empty.setPublisher(harry.getPublisher());
 		bh.addBook(empty);
 
 		//Update the book and test for equality
@@ -108,7 +109,7 @@ public class BookHelperTest {
 			st=conn.createStatement();
 
 			//Delete any test books
-			bh.deleteBook(-1);
+			assertTrue(bh.deleteBook(-1));
 
 			//Add a test book to be deleted and ensure it is added
 			bh.addBook(b);

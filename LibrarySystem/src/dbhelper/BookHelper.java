@@ -43,8 +43,8 @@ public class BookHelper {
 			for(int i = 1; i<keywords.length; i++) {
 				whereClause.append(" AND lower(title) LIKE '%"+keywords[i]+"%'");
 			}
-			
-			
+
+
 			//Get the list of books
 			rs = st.executeQuery("select isbn, title, description, currentQuantity, totalQuantity, "
 					+ "publisherYear, typeName, idNumber from Book where " + whereClause.toString());
@@ -93,17 +93,25 @@ public class BookHelper {
 	/**
 	 * Adds a given book to the book table and the relationship tables for books
 	 * @param b given book
+	 * @return true if book is added, otherwise false since it isn't related at least one author and publisher
 	 */
-	public void addBook(Book b) {
+	public boolean addBook(Book b) {
 		Connection conn = null;
 		Statement st = null;
 		PreparedStatement ps = null;
+		boolean worked = false;
 		//Do nothing if book is not properly instantiated
 		if(b == null)
-			return;
+			return false;
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
+
+			//Only add book if it has a related author and publisher
+			if(b.getAuthor() == null || b.getAuthor().size() == 0)
+				return false;
+			if(b.getPublisher() == null || b.getPublisher().size() == 0)
+				return false;
 
 			//Insert attributes from Book table the table
 			ps = conn.prepareStatement("INSERT INTO Book(isbn, title, description, currentQuantity, "
@@ -119,16 +127,12 @@ public class BookHelper {
 			ps.executeUpdate();
 
 			//Add many-to-many relationship values to their respective tables
-			if(b.getPublisher() != null) {
-				for(Publisher p: b.getPublisher()) {
-					st.executeUpdate("INSERT INTO HasPublisher(isbn, name) VALUES(" + b.getIsbn() + ",'" + p.getName() + "')");
-				}
+			for(Publisher p: b.getPublisher()) {
+				st.executeUpdate("INSERT INTO HasPublisher(isbn, name) VALUES(" + b.getIsbn() + ",'" + p.getName() + "')");
 			}
 
-			if(b.getAuthor() != null) {
-				for(Author a: b.getAuthor()) {
-					st.executeUpdate("INSERT INTO HasAuthor(isbn, name) VALUES(" + b.getIsbn() + ",'" + a.getName() + "')");
-				}
+			for(Author a: b.getAuthor()) {
+				st.executeUpdate("INSERT INTO HasAuthor(isbn, name) VALUES(" + b.getIsbn() + ",'" + a.getName() + "')");
 			}
 
 			if(b.getSearchGenre() != null) {
@@ -150,33 +154,52 @@ public class BookHelper {
 					ps.close();
 			} catch (Exception e) {	}
 		}
+		return worked;
 	}
 
 	/**
 	 * Finds and updates book with same isbn to given values
 	 * @param b updated book
+	 * @return true if book was updated otherwise false
 	 */
-	public void updateBook(Book b) {
+	public boolean updateBook(Book b) {
 		if(b != null)
-			updateBook(b.getIsbn(), b);
+			return updateBook(b.getIsbn(), b);
+		else 
+			return false;
 	}
 
 	/**
-	 * Updates book given old isbn. 
+	 * Updates book given old isbn. If update cannot be done, no changes happen and returns false.
+	 * Might want to retrieve db's version of book in that case.
 	 * @param isbn the old isbn
 	 * @param newBook book after updates
+	 * @return true if the update worked, but false if update fails
 	 */
-	public void updateBook(long isbn, Book b) {
+	public Boolean updateBook(long isbn, Book b) {
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
-		
+		boolean worked = false;
+
 		//Don't do anything if book is invalid
 		if(b == null)
-			return;
+			return false;
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
+
+			//Return if book is not related to at least one author and publisher
+			if(b.getAuthor() == null || b.getAuthor().size() == 0)
+				return false;
+			if(b.getPublisher() == null || b.getPublisher().size() == 0)
+				return false;
+			//Fill null relationship with empty arraylist
+			if(b.getSearchGenre() == null)
+				b.setSearchGenre(new ArrayList<SearchGenre>());
+			//Return if updating book would violate constraints on author or publisher
+			if(!canUpdate(isbn, b, st, rs))
+				return false;
 
 			//Change all fields except isbn
 			st.executeUpdate("UPDATE Book SET title = '" + b.getTitle() + "' WHERE isbn = " + isbn);
@@ -190,14 +213,6 @@ public class BookHelper {
 			//Note this should change isbn in all the relationships too
 			st.executeUpdate("UPDATE Book SET isbn = " + b.getIsbn() + " WHERE isbn = " + isbn);
 
-			//Fill null relationships with empty arraylists
-			if(b.getAuthor() == null)
-				b.setAuthor(new ArrayList<Author>());
-			if(b.getPublisher() == null)
-				b.setPublisher(new ArrayList<Publisher>());
-			if(b.getSearchGenre() == null)
-				b.setSearchGenre(new ArrayList<SearchGenre>());
-			
 			//Update the relationship tables by adding in new ones and deleting those not in new book
 			ArrayList<SearchGenre> currentSG = getSearchGenres(isbn, st, rs);
 			//Add those which are in the updated book but not in already in database 
@@ -233,6 +248,8 @@ public class BookHelper {
 					st.executeUpdate("DELETE FROM HasAuthor WHERE isbn = " + b.getIsbn() + " AND name = '" + a.getName() + "'");
 			}
 
+			worked = true;
+
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -247,28 +264,82 @@ public class BookHelper {
 					rs.close();
 			} catch (Exception e) {	}
 		}
+
+		return worked;
+	}
+
+	/**
+	 * Returns true if update will work from given isbn book in database to given updated book.
+	 * This only works if authors and publishers in old book are related to more than one book,
+	 * or in the new book.
+	 * @param isbn id of book in database
+	 * @param b updated book
+	 * @param st statement to query database
+	 * @param rs result set to recieve query results
+	 * @return true if isbn can be updated to new book, false if it would leave some authors or
+	 * publishers without a related book
+	 * @throws SQLException 
+	 */
+	public boolean canUpdate(long isbn, Book b, Statement st, ResultSet rs) throws SQLException {
+		//Check if any authors will be left without a book.
+		ArrayList<Author> leftAuth = getAuthors(isbn, st, rs);
+		if(b.getAuthor() != null)
+			leftAuth.removeAll(b.getAuthor());
+		//Test if any authors that are left out are only related to this book
+		for(Author a: leftAuth) {
+			rs = st.executeQuery("SELECT * FROM HasAuthor WHERE name = '" + a.getName() + "'");
+			rs.next();
+			if(!rs.next())
+				return false;
+		}
+
+		//Check if any publishers will be left without a book.
+		ArrayList<Publisher> leftPub = getPublishers(isbn, st, rs);
+		if(b.getPublisher() != null)
+			leftPub.removeAll(b.getPublisher());
+		//Test if any publishers that are left out are only related to this book
+		for(Publisher p: leftPub) {
+			rs = st.executeQuery("SELECT * FROM HasPublisher WHERE name = '" + p.getName() + "'");
+			rs.next();
+			if(!rs.next())
+				return false;
+		}
+
+		return true;
 	}
 
 	/**
 	 * Deletes a given book from the book table and removes its relationships
 	 * @param b given book
+	 * @return true if book is deleted, otherwise false
 	 */
-	public void deleteBook(Book b) {
+	public boolean deleteBook(Book b) {
 		if(b != null)
-			deleteBook(b.getIsbn());
+			return deleteBook(b.getIsbn());
+		else
+			return false;
 	}
-
+	
 	/**
 	 * Deletes a given book by isbn from the book table and removes its relationships
 	 * @param b given book isbn
+	 * @return true if book is deleted, otherwise false since it would leave an author or publisher
+	 * without a related book
 	 */
-	public void deleteBook(long isbn) {
+	public boolean deleteBook(long isbn) {
 		Connection conn = null;
 		Statement st = null;
+		boolean worked = false;
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
+			//Check if the book can be deleted by update to a book without relationships
+			Book empty = new Book();
+			ResultSet rs = null;
+			if(!canUpdate(isbn, empty, st, rs))
+				return false;
+			
 			//Delete from relationship tables
 			st.executeUpdate("DELETE FROM HasSearchGenre WHERE isbn = " + isbn);
 			st.executeUpdate("DELETE FROM HasAuthor WHERE isbn = " + isbn);
@@ -276,6 +347,7 @@ public class BookHelper {
 
 			//Delete from Book table
 			st.executeUpdate("DELETE FROM Book WHERE isbn = " + isbn);
+			worked = true;
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -288,6 +360,7 @@ public class BookHelper {
 					st.close();
 			} catch (Exception e) {	}
 		}
+		return worked;
 	}
 
 	/**
