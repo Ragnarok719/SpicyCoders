@@ -197,4 +197,44 @@ public class CategoryHelper {
 		
 		return ret;
 	}
+
+	/**
+	 * Gets all categories in the database
+	 * @return list of all categories stored
+	 */
+	public ArrayList<Category> getAllCategory() {
+		ArrayList<Category> ret = new ArrayList<Category>();
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			rs = st.executeQuery("SELECT * FROM Category");
+			while(rs.next()) {
+				Category c = new Category();
+				c.setIdNumber(rs.getInt("idNumber"));
+				c.setName(rs.getString("name"));
+				c.setSuperCategoryId((Integer)rs.getObject("superCategoryId"));
+				ret.add(c);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
+	}
 }
