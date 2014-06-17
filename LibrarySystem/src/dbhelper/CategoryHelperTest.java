@@ -69,14 +69,11 @@ public class CategoryHelperTest {
 		mod.setIdNumber(-3);
 		mod.setName(sub.getName());
 		
-		//TODO find out why we don't cascade updates or deletes
-		/* NOT YET WORKING
 		//Change top level category
 		ch.updateCategory(-1, mod);
 		assertTrue(mod.equals(ch.getCategory(-3)));
 		assertTrue(ch.getCategory(-2).getSuperCategoryId() == -3);
 		assertTrue(ch.getCategory(-1) == null);
-		*/
 		
 		//Change subcategory
 		c.setSuperCategoryId(1);
@@ -104,8 +101,7 @@ public class CategoryHelperTest {
 		assertTrue(ch.getCategory(-1) == null);
 		assertTrue(ch.getCategory(-2) == null);
 		
-		//TODO not working yet
-		/* Check to make sure deletes cascade
+		//Check to make sure deletes cascade
 		//Add categories to test
 		ch.addCategory(c);
 		ch.addCategory(sub);
@@ -116,7 +112,6 @@ public class CategoryHelperTest {
 		//Check to make sure categories are removed
 		assertTrue(ch.getCategory(-1) == null);
 		assertTrue(ch.getCategory(-2) == null);
-		*/
 	}
 
 	@Test

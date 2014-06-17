@@ -69,8 +69,7 @@ public class PatronHelper {
 			switch (columnName) {
 			case "cardNumber": 
 			case "phone":
-				int num = Integer.parseInt(cond);
-				query = "SELECT * FROM Patron WHERE " + columnName + " = '" + num + "'";
+				query = "SELECT * FROM Patron WHERE " + columnName + " = '" + cond + "'";
 				break;
 			case "name":
 			case "address":
@@ -110,10 +109,10 @@ public class PatronHelper {
 		return patrons;
 	}
 	
-	/** Updates all fields of a Patron except for cardNumber.
+	/** Updates all fields of a Patron.
 	 * @param p Patron object that contains new values for Patron
 	 */
-	public void updatePatron(Patron p) {
+	public void updatePatron(int cardNumber, Patron p) {
 		Connection conn =null;
 		Statement st = null;
 		
@@ -125,12 +124,12 @@ public class PatronHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 			
-			
 			// Update all attributes
-			st.executeUpdate("UPDATE Patron SET name = " + p.getName() + "WHERE cardNumber = " + p.getCardNumber());
-			st.executeUpdate("UPDATE Patron SET phone = " + p.getPhone() + "WHERE cardNumber = " + p.getCardNumber());
-			st.executeUpdate("UPDATE Patron SET address = " + p.getAddress() + "WHERE cardNumber = " + p.getCardNumber());
-			st.executeUpdate("UPDATE Patron SET unpaidFees = " + p.getUnpaidFees() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET name = '" + p.getName() + "' WHERE cardNumber = '" + cardNumber + "'");
+			st.executeUpdate("UPDATE Patron SET phone = '" + p.getPhone() + "' WHERE cardNumber = '" + cardNumber + "'");
+			st.executeUpdate("UPDATE Patron SET address = '" + p.getAddress() + "' WHERE cardNumber = '" + cardNumber + "'");
+			st.executeUpdate("UPDATE Patron SET unpaidFees = '" + p.getUnpaidFees() + "' WHERE cardNumber = '" + cardNumber + "'");
+			st.executeUpdate("UPDATE Patron SET cardNumber = '" + p.getCardNumber() + "' WHERE cardNumber = '" + cardNumber + "'");
 			
 		} catch (SQLException e) {	
 			e.getMessage();

@@ -148,15 +148,9 @@ public class ReportHelperTest {
 	@Test
 	public void testGetPublishers() throws Exception{
 	
-		 HashMap<String, Integer> publisherMap = rh.getPublishers();
+		 HashMap<String, Integer> publisherMap = rh.getTopPublishers();
 		 
-		 assertTrue(publisherMap.size() == 7);
-		 assertTrue(publisherMap.get("Arthur A. Levine Books") == 1);
-		 assertTrue(publisherMap.get("Houghton Mifflin Harcourt") == 1);
-		 assertTrue(publisherMap.get("Mcgraw Hill Ryerson Ltd") == 1);
-		 assertTrue(publisherMap.get("Pearson Education Canada") == 1);
-		 assertTrue(publisherMap.get("Penguin Classics") == 1);
-		 assertTrue(publisherMap.get("Scholastic") == 1);
+		 assertTrue(publisherMap.size() == 1);
 		 assertTrue(publisherMap.get("Scholastic Paperbacks") == 3);
 		
 	}

@@ -54,10 +54,10 @@ public class CategoryHelper {
 
 	/**
 	 * Updates category of given idNumber to values of new category.
-	 * @param idNumber the old category's id
+	 * @param oldId the old category's id number
 	 * @param c the updated category
 	 */
-	public void updateCategory(int idNumber, Category c) {
+	public void updateCategory(int oldId, Category c) {
 		Connection conn = null;
 		Statement st = null;
 
@@ -68,12 +68,18 @@ public class CategoryHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 
-			st.executeUpdate("UPDATE Category SET name = '" + c.getName() + "' WHERE idNumber = " + idNumber);
-			st.executeUpdate("UPDATE Category SET superCategoryId = " + c.getSuperCategoryId() + " WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Category SET name = '" + c.getName() + "' WHERE idNumber = " + oldId);
+			st.executeUpdate("UPDATE Category SET superCategoryId = " + c.getSuperCategoryId() + " WHERE idNumber = " + oldId);
+			
 			//Update idNumber last
-			st.executeUpdate("UPDATE Category SET idNumber = " + c.getIdNumber() + " WHERE idNumber = " + idNumber);
-
-
+			//Temporarily remove key constraint and update given category's id
+			st.execute("SET foreign_key_checks = 0");
+			st.executeUpdate("UPDATE Category SET idNumber = " + c.getIdNumber() + " WHERE idNumber = " + oldId);
+			//Update all children
+			st.executeUpdate("UPDATE Category SET superCategoryId = " + c.getIdNumber() + " WHERE superCategoryId = " + oldId);
+			//Reinstate foreign key constraint
+			st.execute("SET foreign_key_checks = 0");
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -89,7 +95,7 @@ public class CategoryHelper {
 	}
 	
 	/**
-	 * Deletes a category by its given id
+	 * Deletes a category and all its subcategories by its given id
 	 * @param idNumber given id
 	 */
 	public void deleteCategory(int idNumber) {
@@ -99,7 +105,11 @@ public class CategoryHelper {
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
+			
+			//Manually delete all children categories
+			st.executeUpdate("DELETE FROM Category WHERE superCategoryId = " + idNumber);
 
+			//Delete the category now that it has no children
 			st.executeUpdate("DELETE FROM Category WHERE idNumber = " + idNumber);
 
 

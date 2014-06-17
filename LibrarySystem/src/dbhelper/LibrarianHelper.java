@@ -33,6 +33,7 @@ public class LibrarianHelper {
 			pSt.setString(2, l.getName());
 			pSt.setString(3, l.getAddress());
 			pSt.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.getMessage();
 		} finally {
@@ -63,7 +64,11 @@ public class LibrarianHelper {
 			
 			// If columnName and cond is not null, select specified tuples, otherwise, select all rows
 			if (columnName != null && cond != null) {
-				query = "SELECT * FROM Librarian WHERE " + columnName + " = '" + cond + "'";
+				if (columnName == "idNumber") {
+					query = "SELECT * FROM Librarian WHERE " + columnName + " = '" + cond + "'";
+				} else {
+				query = "SELECT * FROM Librarian WHERE lower(" + columnName + ") LIKE '%" + cond + "%'";
+				}
 			} else {
 				query = "SELECT * FROM Librarian";
 			}
@@ -75,8 +80,9 @@ public class LibrarianHelper {
 			// Convert tuples from ResultSet to list of Librarian objects
 			while (rs.next()) {
 				Librarian l = new Librarian();
-				l.setName(rs.getString(1));
-				l.setAddress(rs.getString(2));
+				l.setIdNumber(rs.getInt(1));
+				l.setName(rs.getString(2));
+				l.setAddress(rs.getString(3));
 				Librarians.add(l);
 			}
 		} catch (SQLException e) {
@@ -99,7 +105,7 @@ public class LibrarianHelper {
 	 * @param idNumber identifier of librarian
 	 * @param l Librarian object with new values 
 	 */
-	public void updateLibrarian(Librarian l) {
+	public void updateLibrarian(int idNumber, Librarian l) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
@@ -107,8 +113,9 @@ public class LibrarianHelper {
 			st=conn.createStatement();
 			
 			// Update each column of the Librarian specified by idNumber
-			st.executeUpdate("UPDATE Librarian SET name = " + l.getName() + "WHERE idNumber = " + l.getIdNumber());
-			st.executeUpdate("UPDATE Librarian SET address = " + l.getAddress() + "WHERE idNumber = " + l.getIdNumber());
+			st.executeUpdate("UPDATE Librarian SET name = '" + l.getName() + "' WHERE idNumber = '" + idNumber + "'");
+			st.executeUpdate("UPDATE Librarian SET address = '" + l.getAddress() + "' WHERE idNumber = '" + idNumber + "'");
+			st.executeUpdate("UPDATE Librarian SET idNumber = '" + l.getIdNumber() + "' WHERE idNumber = '" + idNumber + "'");
 			
 		} catch (SQLException e) {	
 			e.getMessage();
