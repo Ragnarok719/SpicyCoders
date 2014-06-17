@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS Category (
 	superCategoryId int,
 	PRIMARY KEY (idNumber),
 	FOREIGN KEY (superCategoryId) REFERENCES Category (idNumber)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Book (
@@ -59,9 +60,11 @@ CREATE TABLE IF NOT EXISTS Book (
 	typeName varchar(30) NOT NULL,
 	PRIMARY KEY (isbn),
 	FOREIGN KEY (idNumber) REFERENCES Category(idNumber)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (typeName) REFERENCES BookType(typeName)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS HasSearchGenre (
@@ -69,9 +72,10 @@ CREATE TABLE IF NOT EXISTS HasSearchGenre (
 	name varchar(20),
 	PRIMARY KEY (isbn, name),
 	FOREIGN KEY (isbn) REFERENCES Book(isbn)
-	ON DELETE cascade,
+	ON DELETE CASCADE,
 	FOREIGN KEY (name) REFERENCES SearchGenre(name)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS HasAuthor (
@@ -79,9 +83,11 @@ CREATE TABLE IF NOT EXISTS HasAuthor (
 	name varchar(20),
 	PRIMARY KEY (isbn, name),
 	FOREIGN KEY (isbn) REFERENCES Book(isbn)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (name) REFERENCES Author(name)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS HasPublisher (
@@ -89,9 +95,11 @@ CREATE TABLE IF NOT EXISTS HasPublisher (
 	name varchar(30),
 	PRIMARY KEY (isbn, name),
 	FOREIGN KEY (isbn) REFERENCES Book(isbn)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (name) REFERENCES Publisher(name)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS CheckOut (
@@ -102,11 +110,14 @@ CREATE TABLE IF NOT EXISTS CheckOut (
 	idNumber int,
 	PRIMARY KEY (isbn, start, end, cardNumber, idNumber),
 	FOREIGN KEY (isbn) REFERENCES Book(isbn)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (cardNumber) REFERENCES Patron(cardNumber)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (idNumber) REFERENCES Librarian(idNumber)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Returns (
@@ -119,9 +130,11 @@ CREATE TABLE IF NOT EXISTS Returns (
 	returnId int,
 	PRIMARY KEY (isbn, start, end, cardNumber, checkoutId, returnId),
 	FOREIGN KEY (isbn, start, end, cardNumber, checkoutId) REFERENCES CheckOut(isbn, start, end, cardNumber, idNumber)
-	ON DELETE cascade,
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
 	FOREIGN KEY (returnId) REFERENCES Librarian(idNumber)
-	ON DELETE cascade
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 );
 
 
@@ -293,4 +306,6 @@ INSERT
 INTO Returns (isbn, start, end, cardNumber, checkoutId, returned, returnID)
 SELECT isbn, start, end, cardNumber, idNumber, '2014-4-20 12:22:12.23', 
 (SELECT idNumber FROM Librarian WHERE name='Peter Pan') FROM Checkout where start = '2014-04-05 09:21:14';
+
+
 
