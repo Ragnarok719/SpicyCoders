@@ -63,7 +63,7 @@ public class BookHelperTest {
 	public void testAddBook() {
 		//Remove any test books
 		bh.deleteBook(-1);
-
+		
 		//Add book and compare
 		bh.addBook(b);
 		ArrayList<Book> found = bh.keywordSearch("Test");
@@ -72,6 +72,13 @@ public class BookHelperTest {
 
 		//Remove from the books
 		bh.deleteBook(-1);
+		
+		//Don't add books without a publisher or author
+		b.setAuthor(null);
+		assertTrue(!bh.addBook(b));
+		b.setAuthor(harry.getAuthor());
+		b.setPublisher(new ArrayList<Publisher>());
+		assertTrue(!bh.addBook(b));
 	}
 
 	@Test
@@ -95,6 +102,19 @@ public class BookHelperTest {
 		assertTrue(found.size() == 1);
 		assertTrue(found.get(0).equals(b));
 
+		//Don't allow updates that leave publishers without a book
+		assertTrue(!bh.updateBook(9780545139700L, b));
+
+		//Don't allow updates that leave authors without a book
+		assertTrue(!bh.updateBook(9780321834843L, b));
+
+		//Don't allow updates to make no author or publisher
+		b.setAuthor(null);
+		assertTrue(!bh.updateBook(b.getIsbn(), b));
+		b.setAuthor(harry.getAuthor());
+		b.setPublisher(new ArrayList<Publisher>());
+		assertTrue(!bh.updateBook(b.getIsbn(), b));
+		
 		//Delete test book
 		bh.deleteBook(-1);
 	}
@@ -121,6 +141,12 @@ public class BookHelperTest {
 			assertTrue(bh.getAuthors(-1, st, rs).size() == 0);
 			assertTrue(bh.getPublishers(-1, st, rs).size() == 0);
 			assertTrue(bh.getSearchGenres(-1, st, rs).size() == 0);
+			
+			//Don't allow deletes that leave publishers without a book
+			assertTrue(!bh.deleteBook(9780545139700L));
+
+			//Don't allow deletes that leave authors without a book
+			assertTrue(!bh.deleteBook(9780321834843L));
 		}catch (Exception e) {
 			fail("Caught exception:" + e.getMessage());
 		}
