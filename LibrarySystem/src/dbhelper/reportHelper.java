@@ -49,20 +49,24 @@ public class reportHelper {
 			// the start timestamp must be within the startDate and the endDate
 			resultSet = statement.executeQuery("SELECT * "
 					+ "FROM NoReturnCheckOut NRC "
-					+ "WHERE NRC.start > " + startDate + " and NRC.start < " + endDate + " "
 					+ "ORDER BY NRC.start desc");
 
 			// Add all checkouts in the resultSet into the ArrayList, checkOutLIst
 			while(resultSet.next()){
 				
-				CheckOut co = new CheckOut();
-				co.setIsbn(resultSet.getInt(1));
-				co.setStart(resultSet.getTimestamp(2));
-				co.setEnd(resultSet.getTimestamp(3));
-				co.setCardNumber(resultSet.getInt(4));
-				co.setIdNumber(resultSet.getInt(5));
-				checkOutList.add(co);
+				Timestamp checkStart = resultSet.getTimestamp(2);
 				
+				if(checkStart.getTime() > startDate.getTime() && checkStart.getTime() < endDate.getTime()){
+					
+					CheckOut co = new CheckOut();
+					co.setIsbn(resultSet.getLong(1));
+					co.setStart(resultSet.getTimestamp(2));
+					co.setEnd(resultSet.getTimestamp(3));
+					co.setCardNumber(resultSet.getInt(4));
+					co.setIdNumber(resultSet.getInt(5));
+					checkOutList.add(co);
+					
+				}
 			}
 			
 		} catch (Exception e) {
@@ -472,10 +476,14 @@ public class reportHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
+			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
+			
 			// Create a view that only retains checkouts for which there are no corresponding returns
-			statement.executeQuery("CREATE VIEW NoReturnCheckOut(isbn, start, end, cardNumber, idNumber) AS "
-					              + "SELECT isbn, start, end, cardNumber, idNumber FROM CheckOut"
-					              + " EXCEPT (SELECT isbn, start, end, cardNumber, checkouId FROM Return)");
+			statement.executeUpdate("CREATE VIEW NoReturnCheckOut AS "
+					              + "SELECT c.isbn, c.start, c.end, c.cardNumber, c.idNumber FROM CheckOut c "
+					              + "WHERE NOT EXISTS (SELECT r.isbn, r.start, r.end, r.cardNumber, r.checkoutId FROM Returns r "
+					              + "WHERE c.isbn = r.isbn and c.start = r.start and c.end = r.end and c.cardNumber = r.cardNumber "
+					              + "and c.idNumber = r.checkoutId)");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
