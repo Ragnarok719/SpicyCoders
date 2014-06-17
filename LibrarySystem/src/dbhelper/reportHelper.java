@@ -17,6 +17,88 @@ import data.Patron;
 public class reportHelper {
 
 	/**
+	 * Method getAllCheckOuts returns a collection of checkouts. Each checkout ISBN matches
+	 * one of the ISBNs in the array (bookIsbnArray) given as an argument to the method
+	 * 
+	 * @param bookIsbnArray an array of ISBNs
+	 * 
+	 */	
+	public ArrayList<CheckOut> getIsbnCheckOuts(long[] bookIsbnArray) throws Exception {
+		
+		if(bookIsbnArray == null || bookIsbnArray.length == 0){
+			return null;
+		}
+		
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		ArrayList<CheckOut> checkOutList = new ArrayList<CheckOut>();
+		
+		try {
+			
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			// create a view of checkouts without returns
+			createCheckOutView();
+			
+			//Create where clause to append all the ISBNs of the books
+			StringBuilder whereClause = new StringBuilder("isbn = " + bookIsbnArray[0]);
+			for(int i = 1; i < bookIsbnArray.length; i++) {
+				whereClause.append(" OR isbn = "+ bookIsbnArray[i]);
+			}
+			
+			resultSet = statement.executeQuery("SELECT * "
+					+ "FROM NoReturnCheckOut NRC "
+					+ "WHERE " + whereClause.toString());
+
+			// Add all checkouts in the resultSet into the ArrayList, checkOutLIst
+			while(resultSet.next()){
+					
+					CheckOut co = new CheckOut();
+					co.setIsbn(resultSet.getLong(1));
+					co.setStart(resultSet.getTimestamp(2));
+					co.setEnd(resultSet.getTimestamp(3));
+					co.setCardNumber(resultSet.getInt(4));
+					co.setIdNumber(resultSet.getInt(5));
+					checkOutList.add(co);
+					
+			}
+			
+			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+					connect.close();
+					}
+					
+					if(statement != null){
+					statement.close();
+					}
+					
+					if(resultSet != null){
+					resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		
+		return checkOutList;
+	}	
+	
+	/**
 	 * Method getAllCheckOuts helps generate a report on the books being checked out
 	 * between the start Timestamp and the end Timestamp provided as the arguments
 	 * 
@@ -201,9 +283,6 @@ public class reportHelper {
 			Timestamp current = new Timestamp(date.getTime());
 			
 			while(resultSet.next()){
-				
-				System.out.println("Current Time: " + current.getTime());
-				System.out.println("Checkout Due Time: " + resultSet.getTimestamp(3).getTime());
 				
 				double timeDiff = (current.getTime() - resultSet.getTimestamp(3).getTime()) / oneDay;
 				

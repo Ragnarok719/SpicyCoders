@@ -56,13 +56,50 @@ public class ReportHelperTest {
 		b.setSearchGenre(harry.getSearchGenre());
 		
 	}
+
+	
+	@Test
+	public void testGetIsbnCheckOuts() throws Exception {
+		
+		 long[] isbnArrayA = new long[1];
+		 isbnArrayA[0] = 9780321834843L;
+		 
+		 ArrayList<CheckOut> checkList = rh.getIsbnCheckOuts(isbnArrayA);
+		 assertTrue(checkList.size() == 1);	
+		 assertTrue(checkList.get(0).getCardNumber() == 2);
+
+		 ch.checkOut(b, current, 1, 2);
+		 
+		 long[] isbnArrayB = new long[1];
+		 isbnArrayB[0] = -2;
+		 checkList = rh.getIsbnCheckOuts(isbnArrayB);
+		 assertTrue(checkList.size() == 1);	
+		 assertTrue(checkList.get(0).getCardNumber() == 1);
+		 
+		 long[] isbnArrayC = new long[2];
+		 isbnArrayC[0] = 9780321834843L;
+		 isbnArrayC[1] = -2;
+		 checkList = rh.getIsbnCheckOuts(isbnArrayC);
+		 assertTrue(checkList.size() == 2);			 
+		 ch.deleteCheckOut(b.getIsbn(), 1, 2);
+		 
+		 long[] isbnArrayD = new long[0];
+		 checkList = rh.getIsbnCheckOuts(isbnArrayD);
+		 assertTrue(checkList == null);
+		 
+		 long[] isbnArrayE = new long[1];
+		 isbnArrayE[0] = 500;
+		 checkList = rh.getIsbnCheckOuts(isbnArrayE);
+		 assertTrue(checkList == null || checkList.size() == 0);
+		
+	}
 	
 	@Test
 	public void testGetAllCheckOuts() throws Exception {
 		
 		 Timestamp start = new Timestamp(0);
 		 
-		 ArrayList checkList = rh.getAllCheckOuts(start, current);
+		 ArrayList<CheckOut> checkList = rh.getAllCheckOuts(start, current);
 		 assertTrue(checkList.size() == 1);	
 		 
 		 checkList = rh.getAllCheckOuts(current, current);
@@ -81,8 +118,6 @@ public class ReportHelperTest {
 	
 	@Test
 	public void testGetOverdueCO() throws Exception{
-		
-		ch.deleteCheckOut(b.getIsbn(), 1, 2);
 		
 		Timestamp checkOutTime = new Timestamp(current.getTime() - 3 * oneDay);
 		
