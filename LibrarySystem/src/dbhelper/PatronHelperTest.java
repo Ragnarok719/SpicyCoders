@@ -59,13 +59,13 @@ public class PatronHelperTest {
 
 	@Test
 	public void testSearchPatron() {
-		//Add patron and test by cardNumber and unpaidFees
+		//Add patron and test by cardNumber and address
 		ph.addPatron(p);
 		ArrayList<Patron> found = ph.searchPatron("cardNumber", "-1");
 		assertTrue(found.size() == 1);
 		assertTrue(found.contains(p));
 		
-		found = ph.searchPatron("unpaidFees", "-100");
+		found = ph.searchPatron("address", "Test Address");
 		assertTrue(found.size() == 1);
 		assertTrue(found.contains(p));
 		
@@ -81,11 +81,6 @@ public class PatronHelperTest {
 		assertTrue(found.contains(p2));
 		
 		found = ph.searchPatron("address", "Test Address");
-		assertTrue(found.size() == 2);
-		assertTrue(found.contains(p));
-		assertTrue(found.contains(p2));
-		
-		found = ph.searchPatron("unpaidFees", "-100");
 		assertTrue(found.size() == 2);
 		assertTrue(found.contains(p));
 		assertTrue(found.contains(p2));
