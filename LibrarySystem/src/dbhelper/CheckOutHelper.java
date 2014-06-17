@@ -134,15 +134,15 @@ public class CheckOutHelper {
 				 // Store the return transaction in the database
 				 preparedStatement.executeUpdate();
 				 
-				 double diff = returnTime.getTime() - endTime.getTime();
+				 double oneDay = 1 * 24 * 60 * 60 * 1000;
+				 
+				 double diff = (returnTime.getTime() - endTime.getTime()) / oneDay;
 				 
 				 // Check if the returned book is overdue and if it is, calculate the late fee
 				 // timestamps do not seemed to be stored accurately and so some tolerance is allowed
 				 if (diff > 0.05) {
 					 
-					 double oneDay = 1 * 24 * 60 * 60 * 1000;
-					 
-					 double dLateDays = diff / oneDay;
+					 double dLateDays = diff;
 					 
 					 int lateDays;
 					 

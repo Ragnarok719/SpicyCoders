@@ -122,8 +122,8 @@ public class reportHelper {
 			createCheckOutView();
 			
 			resultSet = statement.executeQuery("SELECT HG.name, COUNT(*) "
-					+ "NoReturnCheckOut NRC, HasSearchGenre HG "
-					+ "WHERE NRC.isbn = HG.isbn, and B.isbn = HG.isbn "
+					+ "FROM NoReturnCheckOut NRC, HasSearchGenre HG "
+					+ "WHERE NRC.isbn = HG.isbn "
 					+ "GROUP BY HG.name "
 					+ "ORDER BY COUNT(*) desc");
 			
@@ -171,7 +171,7 @@ public class reportHelper {
 	 * method retrieves all the overdue checkouts. 
 	 */		
 	
-	public ArrayList<CheckOut> getOverdueCO(Timestamp currentTime, int numDays) throws Exception{
+	public ArrayList<CheckOut> getOverdueCO(int numDays) throws Exception{
 		
 		Connection connect = null;
 		Statement statement = null;
@@ -189,23 +189,31 @@ public class reportHelper {
 			
 			long oneDay = 1 * 24 * 60 * 60 * 1000;			
 				
-			resultSet = statement.executeQuery("SELECT *,  "
+			resultSet = statement.executeQuery("SELECT * "
 					  + "FROM NoReturnCheckOut NRC "
-				      + "WHERE " + currentTime + " - NRC.end > " + numDays * oneDay + " " 
-					  + "ORDER BY NRC.start");
-				
+					  + "ORDER BY NRC.start");	
 			
-			// Add all overdue checkouts in the resultSet into the ArrayList, overdueCOList
+			java.util.Date date = new java.util.Date();
+			Timestamp current = new Timestamp(date.getTime());
+			
 			while(resultSet.next()){
 				
-				CheckOut co = new CheckOut();
-				co.setIsbn(resultSet.getInt(1));
-				co.setStart(resultSet.getTimestamp(2));
-				co.setEnd(resultSet.getTimestamp(3));
-				co.setCardNumber(resultSet.getInt(4));
-				co.setIdNumber(resultSet.getInt(5));
-				overdueCOList.add(co);
+				System.out.println("Current Time: " + current.getTime());
+				System.out.println("Checkout Due Time: " + resultSet.getTimestamp(3).getTime());
 				
+				double timeDiff = (current.getTime() - resultSet.getTimestamp(3).getTime()) / oneDay;
+				
+				if(timeDiff > 0.05 + numDays){
+				
+					CheckOut co = new CheckOut();
+					co.setIsbn(resultSet.getLong(1));
+					co.setStart(resultSet.getTimestamp(2));
+					co.setEnd(resultSet.getTimestamp(3));
+					co.setCardNumber(resultSet.getInt(4));
+					co.setIdNumber(resultSet.getInt(5));
+					overdueCOList.add(co);
+				
+				}
 			}
 			
 		} catch (Exception e) {
