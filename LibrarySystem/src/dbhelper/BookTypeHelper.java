@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import data.BookType;
 
@@ -124,6 +125,49 @@ public class BookTypeHelper {
 				ret.setTypeName(rs.getString("typeName"));
 				ret.setMaxReservation(rs.getInt("maxReservation"));
 				ret.setOverdueFee(rs.getInt("overdueFee"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Gets all book types in the database
+	 * @return a list of all book types stored or empty if none
+	 */
+	public ArrayList<BookType> getAllBookType() {
+		ArrayList<BookType> ret = new ArrayList<BookType>();
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			//Select the book type
+			rs = st.executeQuery("SELECT * FROM BookType");
+			while(rs.next()) {
+				//Fill fields of the book type
+				BookType bt = new BookType();
+				bt.setTypeName(rs.getString("typeName"));
+				bt.setMaxReservation(rs.getInt("maxReservation"));
+				bt.setOverdueFee(rs.getInt("overdueFee"));
+				
+				ret.add(bt);
 			}
 
 		} catch (Exception e) {

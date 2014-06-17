@@ -12,17 +12,26 @@ import data.Patron;
 
 public class PatronHelper {
 	
+	/**Add a new Patron.
+	 * @param p Patron object that contains all values of attributes new Patron.
+	 */
 	public void addPatron(Patron p) {
 		Connection conn =null;
 		PreparedStatement pSt=null;
+		
+		// If p is null, do nothing
+		if (p == null)
+			return;
+		
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
-			String insert = "INSERT INTO Patron(name, phone, address, unpaidFees) VALUES (?, ?, ?, ?)";
+			String insert = "INSERT INTO Patron(cardNumber, name, phone, address, unpaidFees) VALUES (?, ?, ?, ?, ?)";
 			pSt = conn.prepareStatement(insert);	
-			pSt.setString(1, p.getName());
-			pSt.setInt(2, p.getPhone());
-			pSt.setString(3, p.getAddress());
-			pSt.setInt(4, p.getUnpaidFees());
+			pSt.setInt(1, p.getCardNumber());
+			pSt.setString(2, p.getName());
+			pSt.setInt(3, p.getPhone());
+			pSt.setString(4, p.getAddress());
+			pSt.setInt(5, p.getUnpaidFees());
 			pSt.executeUpdate();
 		} catch (SQLException e) {
 			e.getMessage();
@@ -37,30 +46,38 @@ public class PatronHelper {
 		}
 	}
 	
+	/** Gets list of Patron objects that fulfill the conditions; return all Patrons if parameters not specified.
+	 * @param columnName attribute name (should not be unpaidFees)
+	 * @param cond value to compare with
+	 * @return Array list of Patron objects
+	 */
 	public ArrayList<Patron> searchPatron(String columnName, String cond) {
 		Connection conn = null;
 		Statement st=null;
 		ResultSet rs=null;
 		ArrayList<Patron> patrons = null;
 		
-		// Determine which columnName is acted on in the WHERE clause
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			String query = null;
+			
+			// If any parameter is null, return all Patrons
+			if (columnName == null || cond == null) 
+				query = "SELECT * FROM Patron";
+			
+			// Determine how to write query based on columnName and cond
 			switch (columnName) {
 			case "cardNumber": 
 			case "phone":
-			case "unpaidFees": 
 				int num = Integer.parseInt(cond);
 				query = "SELECT * FROM Patron WHERE " + columnName + " = '" + num + "'";
 				break;
 			case "name":
 			case "address":
-				query = "SELECT * FROM Patron WHERE " + columnName + " = '" + cond + "'";
+				query = "SELECT * FROM Patron WHERE lower(" + columnName + ") LIKE '%" + cond + "%'";
 				break;
 			default:
-				query = "SELECT * FROM Patron";
-				break;
+				return null;
 			}
 			
 			st = conn.createStatement();
@@ -93,17 +110,27 @@ public class PatronHelper {
 		return patrons;
 	}
 	
-	public void updatePatron(int cardNumber, Patron p) {
+	/** Updates all fields of a Patron except for cardNumber.
+	 * @param p Patron object that contains new values for Patron
+	 */
+	public void updatePatron(Patron p) {
 		Connection conn =null;
 		Statement st = null;
+		
+		// If p is null, do nothing
+		if (p == null)
+			return;
+		
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 			
-			st.executeUpdate("UPDATE Patron SET name = " + p.getName() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET phone = " + p.getPhone() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET address = " + p.getAddress() + "WHERE cardNumber = " + cardNumber);
-			st.executeUpdate("UPDATE Patron SET unpaidFees = " + p.getUnpaidFees() + "WHERE cardNumber = " + cardNumber);
+			
+			// Update all attributes
+			st.executeUpdate("UPDATE Patron SET name = " + p.getName() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET phone = " + p.getPhone() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET address = " + p.getAddress() + "WHERE cardNumber = " + p.getCardNumber());
+			st.executeUpdate("UPDATE Patron SET unpaidFees = " + p.getUnpaidFees() + "WHERE cardNumber = " + p.getCardNumber());
 			
 		} catch (SQLException e) {	
 			e.getMessage();
@@ -118,6 +145,9 @@ public class PatronHelper {
 		}
 	}
 	
+	/** Delete a Patron.
+	 * @param cardNumber identifier
+	 */
 	public void deletePatron(int cardNumber) {
 		Connection conn =null;
 		Statement st = null;
@@ -125,6 +155,7 @@ public class PatronHelper {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
 			
+			// Delete tuple with that cardNumber
 			String delete = "DELETE FROM Patron WHERE cardNumber = " + cardNumber;
 			st.executeUpdate(delete);
 			

@@ -12,17 +12,26 @@ import data.Librarian;
 
 public class LibrarianHelper {
 	
+	/** Add a new Librarian.
+	 * @param l Librarian object that has all values of new librarian
+	 */
 	public void addLibrarian(Librarian l) {
 		Connection conn =null;
 		PreparedStatement pSt=null;
+		
+		// If l is null, do nothing
+		if (l == null)
+			return;
+		
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			
 			// Insert tuple into Librarian in which attributes are obtained from Librarian object p
-			String insert = "INSERT INTO Librarian(name, address) VALUES (?, ?)";
+			String insert = "INSERT INTO Librarian(idNumber, name, address) VALUES (?, ?, ?)";
 			pSt = conn.prepareStatement(insert);	
-			pSt.setString(1, l.getName());
-			pSt.setString(2, l.getAddress());
+			pSt.setInt(1, l.getIdNumber());
+			pSt.setString(2, l.getName());
+			pSt.setString(3, l.getAddress());
 			pSt.executeUpdate();
 		} catch (SQLException e) {
 			e.getMessage();
@@ -37,16 +46,22 @@ public class LibrarianHelper {
 		}
 	}
 	
+	/** Get list of librarians that fulfill conditions; return all Librarians if parameters not specified
+	 * @param columnName attribute name
+	 * @param cond value that is being searched
+	 * @return Array list of librarians.
+	 */
 	public ArrayList<Librarian> searchLibrarian(String columnName, String cond) {
 		Connection conn = null;
 		Statement st=null;
 		ResultSet rs=null;
 		ArrayList<Librarian> Librarians = null;
 		
-		// If columnName and cond is not null, select specified tuples, otherwise, select all rows
 		try {
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			String query = null;
+			
+			// If columnName and cond is not null, select specified tuples, otherwise, select all rows
 			if (columnName != null && cond != null) {
 				query = "SELECT * FROM Librarian WHERE " + columnName + " = '" + cond + "'";
 			} else {
@@ -80,7 +95,11 @@ public class LibrarianHelper {
 		return Librarians;
 	}
 	
-	public void updateLibrarian(int idNumber, Librarian l) {
+	/** Update a Librarian with new values.
+	 * @param idNumber identifier of librarian
+	 * @param l Librarian object with new values 
+	 */
+	public void updateLibrarian(Librarian l) {
 		Connection conn =null;
 		Statement st = null;
 		try {			
@@ -88,8 +107,8 @@ public class LibrarianHelper {
 			st=conn.createStatement();
 			
 			// Update each column of the Librarian specified by idNumber
-			st.executeUpdate("UPDATE Librarian SET name = " + l.getName() + "WHERE idNumber = " + idNumber);
-			st.executeUpdate("UPDATE Librarian SET address = " + l.getAddress() + "WHERE idNumber = " + idNumber);
+			st.executeUpdate("UPDATE Librarian SET name = " + l.getName() + "WHERE idNumber = " + l.getIdNumber());
+			st.executeUpdate("UPDATE Librarian SET address = " + l.getAddress() + "WHERE idNumber = " + l.getIdNumber());
 			
 		} catch (SQLException e) {	
 			e.getMessage();
@@ -104,6 +123,9 @@ public class LibrarianHelper {
 		}
 	}
 	
+	/** Delete a librarian.
+	 * @param idNumber identifier
+	 */
 	public void deleteLibrarian(int idNumber) {
 		Connection conn =null;
 		Statement st = null;

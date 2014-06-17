@@ -2,6 +2,8 @@ package dbhelper;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,6 +77,24 @@ public class BookTypeHelperTest {
 		
 		//Compare retrieved type to the added one
 		assertTrue(bh.getBookType("TestType").equals(bt));
+		
+		//Delete test type added
+		bh.deleteBookType("TestType");
+	}
+	
+	@Test
+	public void testGetAllBookType() {
+		//Get a list of all book types before adding any
+		ArrayList<BookType> before = bh.getAllBookType();
+		
+		//Get a list after adding test type
+		bh.addBookType(bt);
+		ArrayList<BookType> after = bh.getAllBookType();
+		
+		//Check that the newer list has all types plus the new one
+		assertTrue(before.size()+1 == after.size());
+		assertTrue(after.containsAll(before));
+		assertTrue(after.contains(bt));
 		
 		//Delete test type added
 		bh.deleteBookType("TestType");

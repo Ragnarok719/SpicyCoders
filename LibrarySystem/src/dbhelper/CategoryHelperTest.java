@@ -173,4 +173,24 @@ public class CategoryHelperTest {
 		ch.deleteCategory(-1);
 	}
 
+	@Test
+	public void testGetAllCategory() {
+		//Get a list of all categories before adding any
+		ArrayList<Category> before = ch.getAllCategory();
+		
+		//Get a list after adding categories
+		ch.addCategory(c);
+		ch.addCategory(sub);
+		ArrayList<Category> after = ch.getAllCategory();
+		
+		//Check that newer list has all categories plus the new ones
+		assertTrue(before.size()+2 == after.size());
+		assertTrue(after.containsAll(before));
+		assertTrue(after.contains(c));
+		assertTrue(after.contains(sub));
+		
+		//Delete test category added
+		ch.deleteCategory(-2);
+		ch.deleteCategory(-1);
+	}
 }
