@@ -134,6 +134,8 @@ public class MainFrame extends JFrame {
 				String searchKeyword=textFieldSearch.getText();
 				ArrayList<Book> result=bookHelper.keywordSearch(searchKeyword);
 				if ((result!=null) && (!result.isEmpty())){
+					DefaultTableModel tableModel = (DefaultTableModel)tableBook.getModel();
+					tableModel.setColumnCount(0);
 					for (Book book : result){
 						String isbn=book.getIsbn()+"";
 						String title=book.getTitle();
@@ -143,7 +145,8 @@ public class MainFrame extends JFrame {
 							author=author + a.getName()+";";
 						String description=book.getDescription();
 						String type=book.getTypeName();
-						String category=book.getIdNumber()+"";
+						CategoryHelper chelper=new CategoryHelper();
+						String category=chelper.getCategory(book.getIdNumber()).getName();
 						String currentQ=book.getCurrentQuantity()+"";
 						String totalQ=book.getTotalQuantity()+"";
 						String publisher="";
@@ -154,9 +157,7 @@ public class MainFrame extends JFrame {
 						String genre="";
 						ArrayList<SearchGenre> genres=book.getSearchGenre();
 						for (SearchGenre g : genres)
-							genre=genre+ g.getName()+";";
-						
-						DefaultTableModel tableModel = (DefaultTableModel)tableBook.getModel();
+							genre=genre+ g.getName()+";";						
 						tableModel.addRow(new Object[]{isbn,title,author,description,type,category,currentQ,totalQ,publisher,year,genre});
 					}
 				}		
