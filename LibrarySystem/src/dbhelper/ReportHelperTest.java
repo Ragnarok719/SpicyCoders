@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import data.Book;
 import data.CheckOut;
+import data.Patron;
 
 public class ReportHelperTest {
 
@@ -109,4 +110,64 @@ public class ReportHelperTest {
 		ch.deleteCheckOut(b.getIsbn(), 1, 2);
 	}
 
+	@Test
+	public void testGetPublishers() throws Exception{
+	
+		 HashMap<String, Integer> publisherMap = rh.getPublishers();
+		 
+		 assertTrue(publisherMap.size() == 7);
+		 assertTrue(publisherMap.get("Arthur A. Levine Books") == 1);
+		 assertTrue(publisherMap.get("Houghton Mifflin Harcourt") == 1);
+		 assertTrue(publisherMap.get("Mcgraw Hill Ryerson Ltd") == 1);
+		 assertTrue(publisherMap.get("Pearson Education Canada") == 1);
+		 assertTrue(publisherMap.get("Penguin Classics") == 1);
+		 assertTrue(publisherMap.get("Scholastic") == 1);
+		 assertTrue(publisherMap.get("Scholastic Paperbacks") == 3);
+		
+	}
+	
+	@Test
+	public void testGetOutofStockBooks() throws Exception{
+		
+		ArrayList<String> outOfStockBooks = rh.getOutofStockBooks();
+		
+		assertTrue(outOfStockBooks.size() == 3);
+		assertTrue(outOfStockBooks.get(0).equals("Biological Science"));
+		assertTrue(outOfStockBooks.get(1).equals("Database Management Systems"));
+		assertTrue(outOfStockBooks.get(2).equals("Harry Potter and the Deathly Hallows"));
+	}
+	
+	@Test
+	public void testGetSuperPatrons() throws Exception{
+		
+		long[] isbnArrayA = new long[2];
+		isbnArrayA[0] = 9780072465631L;
+		isbnArrayA[1] = 9780439064873L;
+		
+		ArrayList<Patron> superPatrons = rh.getSuperPatrons(isbnArrayA);
+		assertTrue(superPatrons.size() == 1);
+		assertTrue(superPatrons.get(0).getCardNumber() == 1);
+		
+		long[] isbnArrayB = new long[0];
+		superPatrons = rh.getSuperPatrons(isbnArrayB);
+		assertTrue(superPatrons == null || superPatrons.size() == 0);
+		
+		long[] isbnArrayC = new long[1];
+		isbnArrayC[0] = 5L;
+		superPatrons = rh.getSuperPatrons(isbnArrayC);
+		assertTrue(superPatrons == null || superPatrons.size() == 0);
+		
+		long[] isbnArrayD = new long[1];
+		isbnArrayD[0] = 9780547928227L;
+		superPatrons = rh.getSuperPatrons(isbnArrayD);
+		assertTrue(superPatrons.size() == 2);
+		
+		long[] isbnArrayE = new long[3];
+		isbnArrayE[0] = 9780072465631L;
+		isbnArrayE[1] = 9780321834843L;
+		isbnArrayE[2] = 9780439064873L;
+		superPatrons = rh.getSuperPatrons(isbnArrayE);
+		assertTrue(superPatrons.size() == 0);
+		
+	}
 }

@@ -69,6 +69,8 @@ public class reportHelper {
 				}
 			}
 			
+			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			throw e;
@@ -133,6 +135,8 @@ public class reportHelper {
 				genreMap.put(resultSet.getString(1), resultSet.getInt(2));
 				
 			}
+			
+			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -214,7 +218,10 @@ public class reportHelper {
 					overdueCOList.add(co);
 				
 				}
+				
 			}
+			
+			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -248,18 +255,17 @@ public class reportHelper {
 
 	
 	/**
-	 * Method getTopPublisher returns the name(s) of the top publisher(s). A top
-	 * publisher in this case means that the publisher has the highest number of
-	 * books in the library.
+	 * Method getPublishers returns the name(s) of the publisher(s) and
+	 * the number of books each publisher is associated with.
 	 * 
 	 */	
-	public HashMap<String, Integer> getTopPublisher() throws Exception{
+	public HashMap<String, Integer> getPublishers() throws Exception{
 		
 		Connection connect = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
 
-		HashMap<String, Integer> topPublishersMap = new HashMap<String, Integer>();
+		HashMap<String, Integer> publishersMap = new HashMap<String, Integer>();
 		
 		try {
 			
@@ -270,16 +276,12 @@ public class reportHelper {
 			resultSet = statement.executeQuery("SELECT HP.name, COUNT(*) "
 					+ "FROM Book B, HasPublisher HP "
 					+ "WHERE B.isbn = HP.isbn "
-					+ "GROUP BY HP.name "
-					+ "HAVING COUNT(*) >= ALL (SELECT COUNT(*) "
-										   + "FROM Book B1, HasPublisher HP1"
-										   + "WHERE B1.isbn = HP1.isbn"
-										   + "GROUP BY HP1.name");
+					+ "GROUP BY HP.name");
 			
 			// Add genres and their counts into collection genreMap one at a time
 			while(resultSet.next()){
 				
-				topPublishersMap.put(resultSet.getString(1), resultSet.getInt(2));
+				publishersMap.put(resultSet.getString(1), resultSet.getInt(2));
 				
 			}
 			
@@ -309,7 +311,7 @@ public class reportHelper {
 				}
 			}
 		
-		return topPublishersMap;		
+		return publishersMap;		
 		
 	}
 	
@@ -333,9 +335,10 @@ public class reportHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			resultSet = statement.executeQuery("SELECT DISTINCT title"
+			resultSet = statement.executeQuery("SELECT DISTINCT title "
 					+ "FROM Book "
-					+ "WHERE currentQuantity = 0");
+					+ "WHERE currentQuantity = 0 "
+					+ "ORDER BY title");
 			
 			// Add genres and their counts into collection genreMap one at a time
 			while(resultSet.next()){
@@ -376,15 +379,15 @@ public class reportHelper {
 
 	/**
 	 * Method getSuperPatrons returns a list of patrons who have checked out all the books
-	 * in the array which is provided as an argument to the method
+	 * with the corresponding ISBNs in the array which is provided as an argument to the method
 	 * 
 	 * @param isbnArray a collection of ISBNs
 	 */	
 	
-	public ArrayList<Patron> getSuperPatrons(Book[] bookArray) throws Exception{
+	public ArrayList<Patron> getSuperPatrons(long[] bookIsbnArray) throws Exception{
 		
 		// if there are no elements in the array then we do not return anything
-		if(bookArray == null){
+		if(bookIsbnArray == null || bookIsbnArray.length == 0){
 			return null;
 		}
 		
@@ -402,28 +405,30 @@ public class reportHelper {
 			
 			
 			//Create where clause to append all the ISBNs of the books
-			StringBuilder whereClause = new StringBuilder("isbn = " + bookArray[0].getIsbn() + " ");
-			for(int i = 1; i < bookArray.length; i++) {
-				whereClause.append(" OR isbn = "+ bookArray[i]);
+			StringBuilder whereClause = new StringBuilder("isbn = " + bookIsbnArray[0]);
+			for(int i = 1; i < bookIsbnArray.length; i++) {
+				whereClause.append(" OR isbn = "+ bookIsbnArray[i]);
 			}
 			
 			
-			// Create a view that only 
-			statement.executeQuery("CREATE VIEW TempBook(isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName) AS "
+			// Create a view that only contains books with the ISBNs in the array
+			statement.executeUpdate("CREATE VIEW TempBook AS "
 					              + "SELECT isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName "
 					              + "FROM Book "
 					              + "WHERE " + whereClause.toString());
 			
-			resultSet = statement.executeQuery("SELECT * "
-					  						  + "FROM Patron P "
-					  						  + "WHERE NOT EXISTS "
-					  						  + "((SELECT T.isbn "
-					  						  + "FROM TempBook T) "
-					  						  + "EXCEPT "
-					  						  + "(SELECT C.isbn "
-					  						  + "FROM CheckOut C "
-					  						  + "WHERE C.cardNumber = P.cardNumber))");
-				
+			// Make sure the view has at least one row. Otherwise return null
+			resultSet = statement.executeQuery("SELECT * FROM TempBook");
+			
+			if(!resultSet.next()){
+				statement.executeUpdate("DROP VIEW TempBook");
+				return null;
+			}
+			
+			
+			resultSet = statement.executeQuery("SELECT * FROM Patron P WHERE NOT EXISTS "
+					  						 + "(SELECT T.isbn FROM TempBook T WHERE NOT EXISTS "
+					  						 + "(SELECT C.isbn FROM CheckOut C WHERE C.cardNumber = P.cardNumber AND T.isbn = C.isbn))");
 			
 			// Add all the patrons in the resultSet into the ArrayList, superPatrons
 			while(resultSet.next()){
@@ -437,6 +442,8 @@ public class reportHelper {
 				superPatrons.add(p);
 				
 			}
+			
+			statement.executeUpdate("DROP VIEW TempBook");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -483,8 +490,6 @@ public class reportHelper {
 			// First connect to the database
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
-			
-			statement.executeUpdate("DROP VIEW NoReturnCheckOut");
 			
 			// Create a view that only retains checkouts for which there are no corresponding returns
 			statement.executeUpdate("CREATE VIEW NoReturnCheckOut AS "
