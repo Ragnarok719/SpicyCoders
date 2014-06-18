@@ -9,7 +9,7 @@ public class Book {
   private String description;
   private int currentQuantity;
   private int totalQuantity;
-  private int publishYear;
+  private Integer publishYear;
   private int idNumber;
   private String typeName;
   private ArrayList<Author> author;
