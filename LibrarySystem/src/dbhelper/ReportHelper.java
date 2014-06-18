@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import data.Book;
 import data.CheckOut;
-import data.HasPublisher;
 import data.Patron;
 
 public class ReportHelper {
@@ -353,18 +351,15 @@ public class ReportHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			// Create a view whose table consists of every publisher and also
-			// the number of books in the library the publisher is associated with
-			statement.executeUpdate("CREATE VIEW PublisherCount AS "
-			 					  + "SELECT HP.name AS Pname, COUNT(*) AS Bcount "
-			 					  + "FROM Book B, HasPublisher HP "
-			 					  + "WHERE B.isbn = HP.isbn "
-			 					  + "GROUP BY HP.name");
-			
 			// Select the name(s) of the top publisher(s) and also the book count(s)
- 			resultSet = statement.executeQuery("SELECT Pname, Bcount "
- 					+ "FROM PublisherCount "
- 					+ "WHERE Bcount IN (SELECT MAX(Bcount) FROM PublisherCount)");
+			resultSet = statement.executeQuery("SELECT HP.name, COUNT(*) "
+					+ "FROM Book B, HasPUblisher HP "
+					+ "WHERE B.isbn = HP.isbn "
+					+ "GROUP BY HP.name "
+					+ "HAVING COUNT(*) >= ALL (SELECT COUNT(*) "
+									        + "FROM Book B1, HasPublisher HP1 "
+									        + "WHERE B1.isbn = HP1.isbn "
+									        + "GROUP BY HP1.name)");
 			
 			// Add genres and their counts into collection genreMap one at a time
 			while(resultSet.next()){
@@ -372,9 +367,6 @@ public class ReportHelper {
 				publishersMap.put(resultSet.getString(1), resultSet.getInt(2));
 				
 			}
-			
-			// Delete the view
-			 statement.executeUpdate("DROP VIEW PublisherCount");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -563,6 +555,60 @@ public class ReportHelper {
 			}
 		
 		return superPatrons;
+	}
+	
+	/**
+	 * Gets average book checkout time for each patrons that have the largest unpaid fees.
+	 * @return a map of names of patrons who have largest unpaid fees with their average checkout time in days
+	 */
+	public Map<String, Double> getTimeForLargestUnpaid() {
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		Map<String, Double> ret = new HashMap<String, Double>();
+		
+		try {
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			resultSet = statement.executeQuery("SELECT avg(TIMESTAMPDIFF(SECOND, start, end)), "
+					+ "p.name FROM Patron p, Checkout c WHERE p.cardNumber = c.cardNumber "
+					+ "GROUP BY p.cardNumber, p.name, p.unpaidFees Having p.unpaidFees = "
+					+ "(SELECT max(unpaidFees) FROM Patron)");
+			
+			while(resultSet.next()) {
+				long oneDay = 1 * 24 * 60 * 60;	
+				double days = ((double) resultSet.getInt(1))/oneDay;
+				ret.put(resultSet.getString(2), days);
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(statement != null){
+						statement.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		return ret;
+		
 	}
 	
 	/**
