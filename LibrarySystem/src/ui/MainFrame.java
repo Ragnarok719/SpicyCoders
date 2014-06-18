@@ -517,7 +517,7 @@ public class MainFrame extends JFrame {
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
 				try {
-					helper.checkOut(book,ts,patron,librarian);
+				helper.checkOut(book,ts,patron,librarian);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -615,21 +615,62 @@ public class MainFrame extends JFrame {
 		panelCategory.add(btnDisplaycategory);
 		
 		btnAddCategory = new JButton("AddCategory");
+		btnAddCategory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Category category=new Category();
+				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
+				category.setName(textFieldCategoryName.getText());
+				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText()));				
+				CategoryHelper helper=new CategoryHelper();
+				helper.addCategory(category);		
+				JOptionPane.showMessageDialog(null, "Add category "+category.getName(), "Add category", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		btnAddCategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnAddCategory.setBounds(640, 238, 160, 40);
 		panelCategory.add(btnAddCategory);
 		
 		btnGetselected = new JButton("GetSelected");
+		btnGetselected.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selected=tableCategory.getSelectedRow();
+				textFieldCategoryName.setText(tableCategory.getValueAt(selected, 0).toString());
+				textFieldCategoryId.setText(tableCategory.getValueAt(selected, 1).toString());
+				textFieldCategorySuper.setText(tableCategory.getValueAt(selected, 2).toString());
+			}
+		});
 		btnGetselected.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnGetselected.setBounds(640, 318, 160, 40);
 		panelCategory.add(btnGetselected);
 		
 		btnDeleteselected = new JButton("DeleteSelected");
+		btnDeleteselected.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selected=tableCategory.getSelectedRow();
+				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString());
+				CategoryHelper helper=new CategoryHelper();
+				helper.deleteCategory(id);
+				JOptionPane.showMessageDialog(null, "Delete category with ID"+id, "Delete category", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		btnDeleteselected.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnDeleteselected.setBounds(640, 398, 160, 40);
 		panelCategory.add(btnDeleteselected);
 		
 		btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Category category=new Category();
+				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
+				category.setName(textFieldCategoryName.getText());
+				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText()));				
+				CategoryHelper helper=new CategoryHelper();
+				int selected=tableCategory.getSelectedRow();
+				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString());
+				helper.updateCategory(id,category);		
+				JOptionPane.showMessageDialog(null, "Update category "+category.getName(), "Update category", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		btnUpdate.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnUpdate.setBounds(640, 478, 160, 40);
 		panelCategory.add(btnUpdate);
