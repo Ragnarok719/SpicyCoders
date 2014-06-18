@@ -379,36 +379,41 @@ public class MainFrame extends JFrame {
 				BookHelper helper=new BookHelper();
 				Long isbn=Long.parseLong(textFieldIsbn.getText().trim());
 				Book book=helper.getBook(isbn);
-				textFieldTitle.setText(book.getTitle());
-				textFieldDescription.setText(book.getDescription());
-				textFieldCurrentQ.setText(book.getCurrentQuantity()+"");
-				textFieldTotalQ.setText(book.getTotalQuantity()+"");
-				textFieldPulishYear.setText(book.getPublishYear()+"");
-				textFieldType.setText(book.getTypeName());
-				CategoryHelper chelper=new CategoryHelper();
-				String category=chelper.getCategory(book.getIdNumber()).getName();
-				textFieldCategory.setText(category);
-				String author="";
-				String publisher="";
-				String genre="";
-				if(book.getAuthor() != null && book.getAuthor().size() > 0) {
-					for (Author a:book.getAuthor())
-						author=author+a.getName()+", ";
-					author = author.substring(0, author.length()-2);
+				if (book!=null){
+					textFieldTitle.setText(book.getTitle());
+					textFieldDescription.setText(book.getDescription());
+					textFieldCurrentQ.setText(book.getCurrentQuantity()+"");
+					textFieldTotalQ.setText(book.getTotalQuantity()+"");
+					textFieldPulishYear.setText(book.getPublishYear()+"");
+					textFieldType.setText(book.getTypeName());
+					CategoryHelper chelper=new CategoryHelper();
+					String category=chelper.getCategory(book.getIdNumber()).getName();
+					textFieldCategory.setText(category);
+					String author="";
+					String publisher="";
+					String genre="";
+					if(book.getAuthor() != null && book.getAuthor().size() > 0) {
+						for (Author a:book.getAuthor())
+							author=author+a.getName()+", ";
+						author = author.substring(0, author.length()-2);
+					}
+					if(book.getPublisher() != null && book.getPublisher().size() > 0) {
+						for (Publisher p:book.getPublisher())
+							publisher=publisher+p.getName() + ", ";
+						publisher = publisher.substring(0, publisher.length()-2);
+					}
+					if(book.getSearchGenre() != null && book.getSearchGenre().size() > 0) {
+						for (SearchGenre g:book.getSearchGenre())
+							genre=genre+g.getName() + ", ";
+						genre = genre.substring(0, genre.length()-2);
+					}
+					textFieldAuthor.setText(author);
+					textFieldPublisher.setText(publisher);
+					textFieldGenre.setText(genre);
 				}
-				if(book.getPublisher() != null && book.getPublisher().size() > 0) {
-					for (Publisher p:book.getPublisher())
-						publisher=publisher+p.getName() + ", ";
-					publisher = publisher.substring(0, publisher.length()-2);
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
 				}
-				if(book.getSearchGenre() != null && book.getSearchGenre().size() > 0) {
-					for (SearchGenre g:book.getSearchGenre())
-						genre=genre+g.getName() + ", ";
-					genre = genre.substring(0, genre.length()-2);
-				}
-				textFieldAuthor.setText(author);
-				textFieldPublisher.setText(publisher);
-				textFieldGenre.setText(genre);
 			}
 		});
 		buttonSearchBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -461,8 +466,11 @@ public class MainFrame extends JFrame {
 				book.setSearchGenre(genreList);
 				
 				BookHelper helper=new BookHelper();
-				helper.addBook(book);		
-				JOptionPane.showMessageDialog(null, "Add book with isbn "+book.getIsbn(), "Add book", JOptionPane.PLAIN_MESSAGE);
+				boolean flag=helper.addBook(book);	
+				if (flag)
+					JOptionPane.showMessageDialog(null, "Add book with isbn "+book.getIsbn(), "Add book", JOptionPane.PLAIN_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, "Failed to insert the book into database!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		buttonAddBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -515,8 +523,11 @@ public class MainFrame extends JFrame {
 				book.setSearchGenre(genreList);
 				
 				BookHelper helper=new BookHelper();
-				helper.updateBook(book);		
-				JOptionPane.showMessageDialog(null, "Update book with isbn "+book.getIsbn(), "Update book", JOptionPane.PLAIN_MESSAGE);
+				boolean flag=helper.updateBook(book);		
+				if (flag)
+					JOptionPane.showMessageDialog(null, "Update book with isbn "+book.getIsbn(), "Update book", JOptionPane.PLAIN_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, "Failed to update the book in the database!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		buttonUpdateBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -530,8 +541,11 @@ public class MainFrame extends JFrame {
 				Book book=new Book();
 				book.setIsbn(Long.parseLong(textFieldIsbn.getText().trim()));
 				BookHelper helper=new BookHelper();
-				helper.deleteBook(book);		
-				JOptionPane.showMessageDialog(null, "Delete book with isbn "+book.getIsbn(), "Delete book", JOptionPane.PLAIN_MESSAGE);
+				boolean flag=helper.deleteBook(book);		
+				if (flag)
+					JOptionPane.showMessageDialog(null, "Delete book with isbn "+book.getIsbn(), "Delete book", JOptionPane.PLAIN_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, "Failed to delete the book in the database!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		buttonDeleteBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -581,13 +595,17 @@ public class MainFrame extends JFrame {
 				int patron=Integer.parseInt(textFieldPatron.getText().trim());
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
+				boolean flag=false;
 				try {
-				helper.checkOut(book,ts,patron,librarian);
+				flag=helper.checkOut(book,ts,patron,librarian);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
-				JOptionPane.showMessageDialog(null, "Check out the book with isbn="+book.getIsbn()+" for patron whose id="+patron, "CheckOut",JOptionPane.PLAIN_MESSAGE);
+				if (flag)
+					JOptionPane.showMessageDialog(null, "Check out the book with isbn="+book.getIsbn()+" for patron whose id="+patron, "CheckOut",JOptionPane.PLAIN_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, "Failed to checkout the book in the database!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnCheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -603,13 +621,17 @@ public class MainFrame extends JFrame {
 				int patron=Integer.parseInt(textFieldPatron.getText().trim());
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
+				boolean flag=false;
 				try {
-					helper.returnBook(ts,isbn,patron,librarian);
+					flag=helper.returnBook(ts,isbn,patron,librarian);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
-				JOptionPane.showMessageDialog(null, "Return the book with isbn="+isbn+" for patron whose id="+patron, "Return",JOptionPane.PLAIN_MESSAGE);
+				if (flag)
+					JOptionPane.showMessageDialog(null, "Return the book with isbn="+isbn+" for patron whose id="+patron, "Return",JOptionPane.PLAIN_MESSAGE);
+				else
+					JOptionPane.showMessageDialog(null, "Failed to return the book into database!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnReturn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
