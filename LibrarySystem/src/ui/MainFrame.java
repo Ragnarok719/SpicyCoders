@@ -377,7 +377,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BookHelper helper=new BookHelper();
-				Long isbn=Long.parseLong(textFieldIsbn.getText());
+				Long isbn=Long.parseLong(textFieldIsbn.getText().trim());
 				Book book=helper.getBook(isbn);
 				textFieldTitle.setText(book.getTitle());
 				textFieldDescription.setText(book.getDescription());
@@ -420,13 +420,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
-				book.setTitle(textFieldTitle.getText());
-				book.setDescription(textFieldDescription.getText());
-				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
-				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
-				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
-				book.setTypeName(textFieldType.getText());
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText().trim()));
+				book.setTitle(textFieldTitle.getText().trim());
+				book.setDescription(textFieldDescription.getText().trim());
+				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText().trim()));
+				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText().trim()));
+				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText().trim()));
+				book.setTypeName(textFieldType.getText().trim());
 				String category=textFieldCategory.getText();
 				CategoryHelper chelper=new CategoryHelper();
 				Category cate=chelper.getCategory(category);
@@ -474,13 +474,13 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
-				book.setTitle(textFieldTitle.getText());
-				book.setDescription(textFieldDescription.getText());
-				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
-				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
-				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
-				book.setTypeName(textFieldType.getText());
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText().trim()));
+				book.setTitle(textFieldTitle.getText().trim());
+				book.setDescription(textFieldDescription.getText().trim());
+				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText().trim()));
+				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText().trim()));
+				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText().trim()));
+				book.setTypeName(textFieldType.getText().trim());
 				String category=textFieldCategory.getText();
 				CategoryHelper chelper=new CategoryHelper();
 				Category cate=chelper.getCategory(category);
@@ -528,7 +528,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText().trim()));
 				BookHelper helper=new BookHelper();
 				helper.deleteBook(book);		
 				JOptionPane.showMessageDialog(null, "Delete book with isbn "+book.getIsbn(), "Delete book", JOptionPane.PLAIN_MESSAGE);
@@ -576,9 +576,9 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
 				BookHelper bhelper=new BookHelper();
-				long isbn=Long.parseLong(textFieldIsbn2.getText());
+				long isbn=Long.parseLong(textFieldIsbn2.getText().trim());
 				Book book=bhelper.getBook(isbn);
-				int patron=Integer.parseInt(textFieldPatron.getText());
+				int patron=Integer.parseInt(textFieldPatron.getText().trim());
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
 				try {
@@ -599,8 +599,8 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
-				long isbn=Long.parseLong(textFieldIsbn2.getText());
-				int patron=Integer.parseInt(textFieldPatron.getText());
+				long isbn=Long.parseLong(textFieldIsbn2.getText().trim());
+				int patron=Integer.parseInt(textFieldPatron.getText().trim());
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
 				try {
@@ -689,9 +689,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Category category=new Category();
-				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
-				category.setName(textFieldCategoryName.getText());
-				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText()));				
+				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText().trim()));
+				category.setName(textFieldCategoryName.getText().trim());
+				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText().trim()));				
 				CategoryHelper helper=new CategoryHelper();
 				helper.addCategory(category);		
 				JOptionPane.showMessageDialog(null, "Add category "+category.getName(), "Add category", JOptionPane.PLAIN_MESSAGE);
@@ -720,7 +720,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selected=tableCategory.getSelectedRow();
-				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString());
+				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString().trim());
 				CategoryHelper helper=new CategoryHelper();
 				helper.deleteCategory(id);
 				JOptionPane.showMessageDialog(null, "Delete category with ID"+id, "Delete category", JOptionPane.PLAIN_MESSAGE);
@@ -735,12 +735,12 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Category category=new Category();
-				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
-				category.setName(textFieldCategoryName.getText());
-				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText()));				
+				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText().trim()));
+				category.setName(textFieldCategoryName.getText().trim());
+				category.setSuperCategoryId(Integer.parseInt(textFieldCategorySuper.getText().trim()));				
 				CategoryHelper helper=new CategoryHelper();
 				int selected=tableCategory.getSelectedRow();
-				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString());
+				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString().trim());
 				helper.updateCategory(id,category);		
 				JOptionPane.showMessageDialog(null, "Update category "+category.getName(), "Update category", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -875,11 +875,11 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Patron patron=new Patron();
-				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
-				patron.setName(textFieldPatronName.getText());
-				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText()));
-				patron.setAddress(textFieldPatronAddress.getText());
-				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText()));
+				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText().trim()));
+				patron.setName(textFieldPatronName.getText().trim());
+				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText().trim()));
+				patron.setAddress(textFieldPatronAddress.getText().trim());
+				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText().trim()));
 				PatronHelper helper=new PatronHelper();
 				helper.addPatron(patron);		
 				JOptionPane.showMessageDialog(null, "Add patron with card number "+patron.getCardNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
@@ -894,11 +894,11 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Patron patron=new Patron();
-				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
-				patron.setName(textFieldPatronName.getText());
-				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText()));
-				patron.setAddress(textFieldPatronAddress.getText());
-				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText()));
+				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText().trim()));
+				patron.setName(textFieldPatronName.getText().trim());
+				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText().trim()));
+				patron.setAddress(textFieldPatronAddress.getText().trim());
+				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText().trim()));
 				PatronHelper helper=new PatronHelper();
 				helper.updatePatron(patron.getCardNumber(), patron);		
 				JOptionPane.showMessageDialog(null, "Update patron with ID "+patron.getCardNumber(), "Update patron", JOptionPane.PLAIN_MESSAGE);
@@ -913,7 +913,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PatronHelper helper=new PatronHelper();
-				int id=Integer.parseInt(textFieldCardNumber.getText());
+				int id=Integer.parseInt(textFieldCardNumber.getText().trim());
 				helper.deletePatron(id);	
 				JOptionPane.showMessageDialog(null, "Delete patron with ID "+id, "Delete patron", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -980,9 +980,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Librarian lib=new Librarian();
-				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
-				lib.setName(textFieldLibName.getText());
-				lib.setAddress(textFieldLibAddress.getText());
+				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText().trim()));
+				lib.setName(textFieldLibName.getText().trim());
+				lib.setAddress(textFieldLibAddress.getText().trim());
 				LibrarianHelper helper=new LibrarianHelper();
 				helper.addLibrarian(lib);		
 				JOptionPane.showMessageDialog(null, "Add librarian with ID "+lib.getIdNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
@@ -997,9 +997,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Librarian lib=new Librarian();
-				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
-				lib.setName(textFieldLibName.getText());
-				lib.setAddress(textFieldLibAddress.getText());
+				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText().trim()));
+				lib.setName(textFieldLibName.getText().trim());
+				lib.setAddress(textFieldLibAddress.getText().trim());
 				LibrarianHelper helper=new LibrarianHelper();
 				helper.updateLibrarian(lib.getIdNumber(), lib);		
 				JOptionPane.showMessageDialog(null, "Update librarian with ID "+lib.getIdNumber(), "Update librarian", JOptionPane.PLAIN_MESSAGE);
@@ -1014,7 +1014,7 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				LibrarianHelper helper=new LibrarianHelper();
-				int id=Integer.parseInt(textFieldLibId.getText());
+				int id=Integer.parseInt(textFieldLibId.getText().trim());
 				helper.deleteLibrarian(id);	
 				JOptionPane.showMessageDialog(null, "Delete librarian with ID "+id, "Delete librarian", JOptionPane.PLAIN_MESSAGE);
 			}
@@ -1246,7 +1246,7 @@ public class MainFrame extends JFrame {
 				String isbns=textAreaIsbn.getText();
 				String[] isbnss=isbns.split("\n");
 				for (int i=0;i<count;i++)
-					isbn[i]=Long.parseLong(isbnss[i]);
+					isbn[i]=Long.parseLong(isbnss[i].trim());
 				ArrayList<Patron> results=new ArrayList<Patron>();
 				try {
 					results=helper.getSuperPatrons(isbn);
