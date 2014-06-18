@@ -404,6 +404,7 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='Database Management Systems'), (SELECT name FROM Publisher WHERE name='Mcgraw Hill Ryerson Ltd')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Publisher WHERE name='Pearson Education Canada')),
 ((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Publisher WHERE name='Penguin Classics')),
+((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Publisher WHERE name='Penguin UK')),
 ((SELECT isbn FROM Book WHERE title='1984'), (SELECT name FROM Publisher WHERE name='Penguin UK')),
 ((SELECT isbn FROM Book WHERE title='Green Eggs and Ham'), (SELECT name FROM Publisher WHERE name='Random House Books for Younger Readers')),
 ((SELECT isbn FROM Book WHERE title='Gordon Ramsays Home Cooking: Everything You Need to Know to Make Fabulous Food'), 
