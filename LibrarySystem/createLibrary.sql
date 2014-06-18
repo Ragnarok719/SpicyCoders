@@ -1,3 +1,21 @@
+# Make sure tables don't exist before creating.
+
+DROP TABLE IF EXISTS Returns;
+DROP TABLE IF EXISTS Checkout;
+DROP TABLE IF EXISTS HasAuthor;
+DROP TABLE IF EXISTS HasSearchGenre;
+DROP TABLE IF EXISTS HasPublisher;
+DROP TABLE IF EXISTS Patron;
+DROP TABLE IF EXISTS Librarian;
+DROP TABLE IF EXISTS Book;
+DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS Publisher;
+DROP TABLE IF EXISTS SearchGenre;
+DROP TABLE IF EXISTS Author;
+DROP TABLE IF EXISTS BookType;
+
+
+
 # Create all the tables
 
 CREATE TABLE IF NOT EXISTS BookType (
@@ -13,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Author (
 );
 
 CREATE TABLE IF NOT EXISTS Publisher (
-	name varchar(30),
+	name varchar(50),
 	PRIMARY KEY (name)
 );
 
@@ -92,7 +110,7 @@ CREATE TABLE IF NOT EXISTS HasAuthor (
 
 CREATE TABLE IF NOT EXISTS HasPublisher (
 	isbn bigint, 
-	name varchar(30),
+	name varchar(50),
 	PRIMARY KEY (isbn, name),
 	FOREIGN KEY (isbn) REFERENCES Book(isbn)
 	ON DELETE CASCADE
@@ -146,7 +164,8 @@ VALUES ('Adult Fiction', '14', '1'),
 ('Adult Nonfiction', '7', '2'),
 ('Children\'s Fiction', '21', '1'),
 ('Children\'s Nonfiction', '21', '1'),
-('Audiobooks', '14', '3');
+('Audiobooks', '14', '3'),
+('Reference Books', '2', '3');
 
 INSERT
 INTO Author
@@ -160,7 +179,19 @@ VALUES ('J.K. Rowling'),
 ('Mary Shelley'),
 ('Mark Twain'),
 ('Jane Austen'),
-('Agatha Christie');
+('Agatha Christie'),
+('George Orwell'),
+('Dr. Seuss'),
+('Gordon Ramsay'),
+('Chris Hadfield'),
+('Susan Cain'),
+('Robert Munsch'),
+('Neil Gaiman'),
+('Randall Munroe'),
+('Benjamin Graham'),
+('Stephen King'),
+('Eben Alexander M.D.'),
+('Oxford Dictionaries');
 
 INSERT
 INTO Publisher
@@ -171,7 +202,18 @@ VALUES ('Scholastic'),
 ('Mcgraw Hill Ryerson Ltd'),
 ('Pearson Education Canada'),
 ('Penguin Classics'),
-('Harper Collins Publishers');
+('Harper Collins Publishers'),
+('Penguin UK'),
+('Random House Books for Younger Readers'),
+('Grand Central Life & Style'),
+('Random House Canada'),
+('Broadway Books'),
+('Firefly Books'),
+('Vertigo'),
+('Harper Business'),
+('Scribner'),
+('Simon & Schuster'),
+('Oxford University Press');
 
 INSERT 
 INTO SearchGenre
@@ -182,7 +224,14 @@ VALUES ('Fantasy'),
 ('Science fiction'),
 ('Biography'),
 ('Essay'),
-('Reference book');
+('Dictionary'),
+('Lifestyle'),
+('Dystopian'),
+('Religion'),
+('Picture Books'),
+('Graphic Novels'),
+('Visual Essay'),
+('Thriller');
 
 INSERT
 INTO Patron(name, phone, address, unpaidFees)
@@ -204,29 +253,68 @@ VALUES ('Strict Shusher', '5000 Quiet Ave'),
 INSERT
 INTO Category(name, superCategoryId)
 VALUES ('Computer Science', null),
-('Canadian Literature', null),
+('Literature', null),
 ('Biology', null),
 ('Databases', '1'),
 ('Genetics', '3'),
-('Fiction', null);
+('Canadian Literature', '2'),
+('Cooking', null),
+('Photography', null),
+('Psychology', null),
+('Entertainment', null),
+('Trivia', '10'),
+('Finances', null),
+('Investing', '12'),
+('Religion', null),
+('Science & Religion', '14'),
+('Dictionary', null);
 
 INSERT
 INTO Book(isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName)
 VALUES 
 ('9780590353427', 'Harry Potter and the Sorcerer\'s Stone', 'Harry Potter goes to Hogwarts.', '1', '3', '1999',
-	(SELECT idNumber FROM Category WHERE name='Fiction'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
 ('9780439064873', 'Harry Potter and the Chamber of Secrets', 'Harry Potter fights a basilisk.', '2', '2', '2000',
-	(SELECT idNumber FROM Category WHERE name='Fiction'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
 ('9780545139700', 'Harry Potter and the Deathly Hallows', 'The final Harry Potter book.', '0', '2', '2009',
-	(SELECT idNumber FROM Category WHERE name='Fiction'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
 ('9780547928227', 'The Hobbit', 'In a hole in the ground there lived a hobbit.', '2', '5', '2012',
-	(SELECT idNumber FROM Category WHERE name='Fiction'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
 ('9780072465631', 'Database Management Systems', 'CPSC 304 Textbook', '0', '1', '2003',
-	(SELECT idNumber FROM Category WHERE name='Databases'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+	(SELECT idNumber FROM Category WHERE name='Databases'), (SELECT typeName FROM BookType WHERE typeName='Reference Books')),
 ('9780321834843', 'Biological Science', 'First Year Biology Textbook', '0', '2', '2012',
-	(SELECT idNumber FROM Category WHERE name='Biology'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+	(SELECT idNumber FROM Category WHERE name='Biology'), (SELECT typeName FROM BookType WHERE typeName='Reference Books')),
 ('9780141439471', 'Frankenstein', 'The classic about a monster creating life.', '3', '3', '2003', 
-	(SELECT idNumber FROM Category WHERE name='Fiction'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction'));
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
+('9780141036144', '1984', 'Doublethink. Big Brother. Doublespeak.', '2', '2', '2008', 
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
+('9780394800165', 'Green Eggs and Ham', '"I do not like green eggs and ham. I do not like them, Sam-I-Am."', '1', '3', '1960', 
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+('9781455525256', 'Gordon Ramsay\'s Home Cooking: Everything You Need to Know to Make Fabulous Food', 
+	'From the chef known for being mean in his cooking shows.', '0', '1', '2013', 
+	(SELECT idNumber FROM Category WHERE name='Cooking'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9780345814944', 'You Are Here: Around the World in 92 Minutes',
+	'A visual essay of Earth from the viewpoint of the International Space Station.', '1', '1', '2014', 
+	(SELECT idNumber FROM Category WHERE name='Photography'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9780307352156', 'Quiet: The Power of Introverts in a World That Can\'t Stop Talking',
+	'Introversion isn\'t bad.', '1', '1', '2013', 
+	(SELECT idNumber FROM Category WHERE name='Psychology'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9780920668375', 'Love You Forever', 'The cover of the book has a kid messing up the bathroom.', '3', '4', '1995', 
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+('9781401225759', 'The Sandman Vol. 1: Preludes & Nocturnes', 'A graphic novel epic.', '1', '2', '2010', 
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
+('9780544272996', 'What If?: Serious Scientific Answers to Absurd Hypothetical Questions', 
+	'From the creator of webcomic xkcd (supposedly popular).', '0', '1', '2014', 
+	(SELECT idNumber FROM Category WHERE name='Trivia'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9780060555665', 'The Intelligent Investor: The Definitive Book on Value Investing', 'Don\'t invest without knowing how.', '1', '2', '2003', 
+	(SELECT idNumber FROM Category WHERE name='Investing'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9781476754451', 'Mr. Mercedes', 'A Stephen King thriller.', '2', '3', '2014', 
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
+('9781451695199', 'Proof of Heaven: A Neurosurgeon\'s Journey into the Afterlife',
+	'A doctor experiences a near death experience of his own.', '1', '1', '2012', 
+	(SELECT idNumber FROM Category WHERE name='Science & Religion'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
+('9780199640942', 'Paperback Oxford English Dictionary', 'Just a dictionary.', '3', '3', '2012', 
+	(SELECT idNumber FROM Category WHERE name='Dictionary'), (SELECT typeName FROM BookType WHERE typeName='Reference Books'));
 
 INSERT
 INTO HasSearchGenre(isbn, name)
@@ -237,8 +325,24 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='The Hobbit'), (SELECT name FROM SearchGenre WHERE name='Fantasy')),
 ((SELECT isbn FROM Book WHERE title='Database Management Systems'), (SELECT name FROM SearchGenre WHERE name='Textbook')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM SearchGenre WHERE name='Textbook')),
-((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM SearchGenre WHERE name='Science Fiction'));
-
+((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM SearchGenre WHERE name='Science Fiction')),
+((SELECT isbn FROM Book WHERE title='1984'), (SELECT name FROM SearchGenre WHERE name='Dystopian')),
+((SELECT isbn FROM Book WHERE title='Green Eggs and Ham'), (SELECT name FROM SearchGenre WHERE name='Humor')),
+((SELECT isbn FROM Book WHERE title='Gordon Ramsay\'s Home Cooking: Everything You Need to Know to Make Fabulous Food'), 
+	(SELECT name FROM SearchGenre WHERE name='Lifestyle')),
+((SELECT isbn FROM Book WHERE title='You Are Here: Around the World in 92 Minutes'), (SELECT name FROM SearchGenre WHERE name='Visual Essay')),
+((SELECT isbn FROM Book WHERE title='Quiet: The Power of Introverts in a World That Can\'t Stop Talking'), 
+	(SELECT name FROM SearchGenre WHERE name='Lifestyle')),
+((SELECT isbn FROM Book WHERE title='Love You Forever'), (SELECT name FROM SearchGenre WHERE name='Picture Books')),
+((SELECT isbn FROM Book WHERE title='The Sandman Vol. 1: Preludes & Nocturnes'), (SELECT name FROM SearchGenre WHERE name='Graphic Novels')),
+((SELECT isbn FROM Book WHERE title='What If?: Serious Scientific Answers to Absurd Hypothetical Questions'), 
+	(SELECT name FROM SearchGenre WHERE name='Humor')),
+((SELECT isbn FROM Book WHERE title='The Intelligent Investor: The Definitive Book on Value Investing'), 
+	(SELECT name FROM SearchGenre WHERE name='Lifestyle')),
+((SELECT isbn FROM Book WHERE title='Mr. Mercedes'), (SELECT name FROM SearchGenre WHERE name='Thriller')),
+((SELECT isbn FROM Book WHERE title='Proof of Heaven: A Neurosurgeon\'s Journey into the Afterlife'), 
+	(SELECT name FROM SearchGenre WHERE name='Religion')),
+((SELECT isbn FROM Book WHERE title='Paperback Oxford English Dictionary'), (SELECT name FROM SearchGenre WHERE name='Dictionary'));
 
 INSERT
 INTO HasAuthor(isbn, name)
@@ -252,7 +356,25 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Author WHERE name='Scott Freeman')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Author WHERE name='Michael Harrington')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Author WHERE name='Joan C. Sharp')),
-((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Author WHERE name='Mary Shelley'));
+((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Author WHERE name='Mary Shelley')),
+((SELECT isbn FROM Book WHERE title='1984'), (SELECT name FROM Author WHERE name='George Orwell')),
+((SELECT isbn FROM Book WHERE title='Green Eggs and Ham'), (SELECT name FROM Author WHERE name='Dr. Seuss')),
+((SELECT isbn FROM Book WHERE title='Gordon Ramsay\'s Home Cooking: Everything You Need to Know to Make Fabulous Food'), 
+	(SELECT name FROM Author WHERE name='Gordon Ramsay')),
+((SELECT isbn FROM Book WHERE title='You Are Here: Around the World in 92 Minutes'), (SELECT name FROM Author WHERE name='Chris Hadfield')),
+((SELECT isbn FROM Book WHERE title='Quiet: The Power of Introverts in a World That Can\'t Stop Talking'), 
+	(SELECT name FROM Author WHERE name='Susan Cain')),
+((SELECT isbn FROM Book WHERE title='Love You Forever'), (SELECT name FROM Author WHERE name='Robert Munsch')),
+((SELECT isbn FROM Book WHERE title='The Sandman Vol. 1: Preludes & Nocturnes'), (SELECT name FROM Author WHERE name='Neil Gaiman')),
+((SELECT isbn FROM Book WHERE title='What If?: Serious Scientific Answers to Absurd Hypothetical Questions'), 
+	(SELECT name FROM Author WHERE name='Randall Munroe')),
+((SELECT isbn FROM Book WHERE title='The Intelligent Investor: The Definitive Book on Value Investing'), 
+	(SELECT name FROM Author WHERE name='Benjamin Graham')),
+((SELECT isbn FROM Book WHERE title='Mr. Mercedes'), (SELECT name FROM Author WHERE name='Stephen King')),
+((SELECT isbn FROM Book WHERE title='Proof of Heaven: A Neurosurgeon\'s Journey into the Afterlife'), 
+	(SELECT name FROM Author WHERE name='Eben Alexander M.D.')),
+((SELECT isbn FROM Book WHERE title='Paperback Oxford English Dictionary'), (SELECT name FROM Author WHERE name='Oxford Dictionaries'));
+
 
 INSERT
 INTO HasPublisher(isbn, name)
@@ -263,7 +385,25 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='The Hobbit'), (SELECT name FROM Publisher WHERE name='Houghton Mifflin Harcourt')),
 ((SELECT isbn FROM Book WHERE title='Database Management Systems'), (SELECT name FROM Publisher WHERE name='Mcgraw Hill Ryerson Ltd')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), (SELECT name FROM Publisher WHERE name='Pearson Education Canada')),
-((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Publisher WHERE name='Penguin Classics'));
+((SELECT isbn FROM Book WHERE title='Frankenstein'), (SELECT name FROM Publisher WHERE name='Penguin Classics')),
+((SELECT isbn FROM Book WHERE title='1984'), (SELECT name FROM Publisher WHERE name='Penguin UK')),
+((SELECT isbn FROM Book WHERE title='Green Eggs and Ham'), (SELECT name FROM Publisher WHERE name='Random House Books for Younger Readers')),
+((SELECT isbn FROM Book WHERE title='Gordon Ramsay\'s Home Cooking: Everything You Need to Know to Make Fabulous Food'), 
+	(SELECT name FROM Publisher WHERE name='Grand Central Life & Style')),
+((SELECT isbn FROM Book WHERE title='You Are Here: Around the World in 92 Minutes'), (SELECT name FROM Publisher WHERE name='Random House Canada')),
+((SELECT isbn FROM Book WHERE title='Quiet: The Power of Introverts in a World That Can\'t Stop Talking'), 
+	(SELECT name FROM Publisher WHERE name='Broadway Books')),
+((SELECT isbn FROM Book WHERE title='Love You Forever'), (SELECT name FROM Publisher WHERE name='Firefly Books')),
+((SELECT isbn FROM Book WHERE title='The Sandman Vol. 1: Preludes & Nocturnes'), (SELECT name FROM Publisher WHERE name='Vertigo')),
+((SELECT isbn FROM Book WHERE title='What If?: Serious Scientific Answers to Absurd Hypothetical Questions'), 
+	(SELECT name FROM Publisher WHERE name='Houghton Mifflin Harcourt')),
+((SELECT isbn FROM Book WHERE title='The Intelligent Investor: The Definitive Book on Value Investing'), 
+	(SELECT name FROM Publisher WHERE name='Harper Business')),
+((SELECT isbn FROM Book WHERE title='Mr. Mercedes'), (SELECT name FROM Publisher WHERE name='Scribner')),
+((SELECT isbn FROM Book WHERE title='Proof of Heaven: A Neurosurgeon\'s Journey into the Afterlife'), 
+	(SELECT name FROM Publisher WHERE name='Simon & Schuster')),
+((SELECT isbn FROM Book WHERE title='Paperback Oxford English Dictionary'), (SELECT name FROM Publisher WHERE name='Oxford University Press'));
+
 
 INSERT
 INTO Checkout(isbn, start, end, cardNumber, idNumber)
