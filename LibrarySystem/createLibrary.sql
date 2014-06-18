@@ -444,7 +444,13 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='Harry Potter and the Chamber of Secrets'), '2014-4-20 1:16:50.13', '2014-4-26 12:47:50.13',
 	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-5-15 1:16:50.13', '2014-5-22 12:47:50.13',
-	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
+	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
+((SELECT isbn FROM Book WHERE title='1984'), '2014-06-15 10:44:45', '2014-06-29 10:44:45',
+	(SELECT cardNumber FROM Patron WHERE name='Jane Lambda'), (SELECT idNumber FROM Librarian WHERE name='Strict Shusher')),
+((SELECT isbn FROM Book WHERE title='Green Eggs and Ham'), '2014-06-15 11:24:45', '2014-06-29 11:24:45',
+	(SELECT cardNumber FROM Patron WHERE name='Norman Doorman'), (SELECT idNumber FROM Librarian WHERE name='Strict Shusher')),
+((SELECT isbn FROM Book WHERE title='You Are Here: Around the World in 92 Minutes'), '2014-06-11 2:24:45', '2014-06-18 2:24:45',
+	(SELECT cardNumber FROM Patron WHERE name='Jack Smith'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
 
 
 INSERT 
@@ -481,5 +487,3 @@ INSERT
 INTO Returns (isbn, start, end, cardNumber, checkoutId, returned, returnID)
 SELECT isbn, start, end, cardNumber, idNumber, '2014-5-26 12:34:13.34', 
 (SELECT idNumber FROM Librarian WHERE name='Clumsy Chad') FROM Checkout where start = '2014-4-23 10:16:50.13';
-
-
