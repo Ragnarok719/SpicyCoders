@@ -110,6 +110,7 @@ public class MainFrame extends JFrame {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					MainFrame frame = new MainFrame();
@@ -159,6 +160,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				BookHelper bookHelper = new BookHelper();
 				DefaultTableModel tableModel = (DefaultTableModel)tableBook.getModel();
@@ -204,6 +206,7 @@ public class MainFrame extends JFrame {
 		
 		btnLibrarianEntrance = new JButton("Librarian Entrance");
 		btnLibrarianEntrance.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String librarianID=JOptionPane.showInputDialog("Enter your ID");
 				LibrarianHelper lHelper=new LibrarianHelper();
@@ -242,6 +245,7 @@ public class MainFrame extends JFrame {
 			boolean[] columnEditables = new boolean[] {
 				false, false, false, false, false, false, false, false, false, false, false
 			};
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
@@ -370,6 +374,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonSearchBook = new JButton("SearchByISBN");
 		buttonSearchBook.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				BookHelper helper=new BookHelper();
 				Long isbn=Long.parseLong(textFieldIsbn.getText());
@@ -386,12 +391,21 @@ public class MainFrame extends JFrame {
 				String author="";
 				String publisher="";
 				String genre="";
-				for (Author a:book.getAuthor())
-					author=author+a.getName();
-				for (Publisher p:book.getPublisher())
-					publisher=publisher+p.getName();
-				for (SearchGenre g:book.getSearchGenre())
-					genre=genre+g.getName();
+				if(book.getAuthor() != null && book.getAuthor().size() > 0) {
+					for (Author a:book.getAuthor())
+						author=author+a.getName()+", ";
+					author = author.substring(0, author.length()-2);
+				}
+				if(book.getPublisher() != null && book.getPublisher().size() > 0) {
+					for (Publisher p:book.getPublisher())
+						publisher=publisher+p.getName() + ", ";
+					publisher = publisher.substring(0, publisher.length()-2);
+				}
+				if(book.getSearchGenre() != null && book.getSearchGenre().size() > 0) {
+					for (SearchGenre g:book.getSearchGenre())
+						genre=genre+g.getName() + ", ";
+					genre = genre.substring(0, genre.length()-2);
+				}
 				textFieldAuthor.setText(author);
 				textFieldPublisher.setText(publisher);
 				textFieldGenre.setText(genre);
@@ -403,6 +417,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonAddBook = new JButton("Add");
 		buttonAddBook.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
 				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
@@ -456,6 +471,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonUpdateBook = new JButton("Update");
 		buttonUpdateBook.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
 				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
@@ -509,6 +525,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonDeleteBook = new JButton("Delete");
 		buttonDeleteBook.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
 				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
@@ -555,6 +572,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnCheckout = new JButton("CheckOut");
 		btnCheckout.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
 				BookHelper bhelper=new BookHelper();
@@ -578,6 +596,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnReturn = new JButton("Return");
 		btnReturn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
 				long isbn=Long.parseLong(textFieldIsbn2.getText());
@@ -628,6 +647,7 @@ public class MainFrame extends JFrame {
 			boolean[] columnEditables = new boolean[] {
 				false, false, true
 			};
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
@@ -641,6 +661,7 @@ public class MainFrame extends JFrame {
 		
 		btnDisplaycategory = new JButton("DisplayCategory");
 		btnDisplaycategory.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				CategoryHelper categoryHelper = new CategoryHelper();
 				ArrayList<Category> result=categoryHelper.getAllCategory();
@@ -665,6 +686,7 @@ public class MainFrame extends JFrame {
 		
 		btnAddCategory = new JButton("AddCategory");
 		btnAddCategory.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Category category=new Category();
 				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
@@ -681,6 +703,7 @@ public class MainFrame extends JFrame {
 		
 		btnGetselected = new JButton("GetSelected");
 		btnGetselected.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selected=tableCategory.getSelectedRow();
 				textFieldCategoryName.setText(tableCategory.getValueAt(selected, 0).toString());
@@ -694,6 +717,7 @@ public class MainFrame extends JFrame {
 		
 		btnDeleteselected = new JButton("DeleteSelected");
 		btnDeleteselected.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				int selected=tableCategory.getSelectedRow();
 				int id=Integer.parseInt(tableCategory.getValueAt(selected, 1).toString());
@@ -708,6 +732,7 @@ public class MainFrame extends JFrame {
 		
 		btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Category category=new Category();
 				category.setIdNumber(Integer.parseInt(textFieldCategoryId.getText()));
@@ -824,6 +849,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonSearchPatronByNum = new JButton("SearchByNumber");
 		buttonSearchPatronByNum.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				PatronHelper helper=new PatronHelper();
 				String keyword=textFieldCardNumber.getText();
@@ -846,6 +872,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonAddPatron = new JButton("Add");
 		buttonAddPatron.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Patron patron=new Patron();
 				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
@@ -864,6 +891,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonUpdatePatron = new JButton("Update");
 		buttonUpdatePatron.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Patron patron=new Patron();
 				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
@@ -882,6 +910,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonDeletePatron = new JButton("Delete");
 		buttonDeletePatron.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				PatronHelper helper=new PatronHelper();
 				int id=Integer.parseInt(textFieldCardNumber.getText());
@@ -927,6 +956,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonSearchLibId = new JButton("SearchByID");
 		buttonSearchLibId.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				LibrarianHelper helper=new LibrarianHelper();
 				String keyword=textFieldLibId.getText();
@@ -947,6 +977,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonAddLib = new JButton("Add");
 		buttonAddLib.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Librarian lib=new Librarian();
 				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
@@ -963,6 +994,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonUpdateLib = new JButton("Update");
 		buttonUpdateLib.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Librarian lib=new Librarian();
 				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
@@ -979,6 +1011,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonDeleteLib = new JButton("Delete");
 		buttonDeleteLib.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				LibrarianHelper helper=new LibrarianHelper();
 				int id=Integer.parseInt(textFieldLibId.getText());
@@ -1003,6 +1036,7 @@ public class MainFrame extends JFrame {
 		
 		JButton buttonSearchLibName = new JButton("SearchByName");
 		buttonSearchLibName.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				LibrarianHelper helper=new LibrarianHelper();
 				String keyword=textFieldLibName.getText();
@@ -1024,6 +1058,7 @@ public class MainFrame extends JFrame {
 		
 		buttonSearchPatronByName = new JButton("SearchByName");
 		buttonSearchPatronByName.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				PatronHelper helper=new PatronHelper();
 				String keyword=textFieldPatronName.getText();
@@ -1068,6 +1103,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnAllcheckout = new JButton("AllCheckOuts");
 		btnAllcheckout.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
 				String timestr="1900-01-01 00:00:00";
@@ -1097,6 +1133,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnAlloverduecos = new JButton("AllOverdueCOs");
 		btnAlloverduecos.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
 				ArrayList<CheckOut> checkouts=new ArrayList<CheckOut>();
@@ -1123,6 +1160,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnGenrecounts = new JButton("GenreCounts");
 		btnGenrecounts.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
 				Map<String, Integer> map=new HashMap<String, Integer>();
@@ -1148,6 +1186,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnToppublisher = new JButton("TopPublishers");
 		btnToppublisher.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
 				HashMap<String, Integer> map=new HashMap<String, Integer>();
@@ -1174,6 +1213,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnOutofstockbooks = new JButton("OutOfStockBooks");
 		btnOutofstockbooks.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
 				ArrayList<String> results=new ArrayList<String>();
@@ -1198,6 +1238,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnSuperpatrons = new JButton("SuperPatrons");
 		btnSuperpatrons.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();				
 				int count=textAreaIsbn.getLineCount();
