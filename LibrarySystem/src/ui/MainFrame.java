@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.Timestamp;
 
 import javax.swing.JButton;
@@ -86,6 +88,7 @@ public class MainFrame extends JFrame {
 	private JLabel lblSupercategoryid;
 	private JTextField textFieldCategoryId;
 	private JTextField textFieldCategorySuper;
+	private JTextArea textAreaReport;
 	/**
 	 * Launch the application.
 	 */
@@ -1008,7 +1011,7 @@ public class MainFrame extends JFrame {
 		scrollPaneReport.setBounds(35, 87, 1200, 420);
 		panelReport.add(scrollPaneReport);
 		
-		JTextArea textAreaReport = new JTextArea();
+		textAreaReport = new JTextArea();
 		textAreaReport.setText("Here will be the generated reports.");
 		textAreaReport.setEditable(false);
 		scrollPaneReport.setViewportView(textAreaReport);
@@ -1017,7 +1020,24 @@ public class MainFrame extends JFrame {
 		btnAllcheckout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
-				
+				String timestr="1900-01-01 00:00:00";
+				Timestamp current=new Timestamp(System.currentTimeMillis());
+				Timestamp start=Timestamp.valueOf(timestr);
+				ArrayList<CheckOut> checkouts=new ArrayList<CheckOut>();
+				try {
+					checkouts=helper.getAllCheckOuts(start, current);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of all the checkouts in our library system. "
+						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n";
+				textAreaReport.append(title);
+				for (CheckOut co : checkouts){
+					String info=""+co.getIsbn()+"  "+co.getStart()+"  "+co.getEnd()+"  "+co.getCardNumber()+"  "+co.getIdNumber()+"\n";
+					textAreaReport.append(info);
+				}				
 			}
 		});
 		btnAllcheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -1025,21 +1045,101 @@ public class MainFrame extends JFrame {
 		panelReport.add(btnAllcheckout);
 		
 		JButton btnAlloverduecos = new JButton("AllOverdueCOs");
+		btnAlloverduecos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();
+				ArrayList<CheckOut> checkouts=new ArrayList<CheckOut>();
+				try {
+					checkouts=helper.getOverdueCO(0);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of all the overdued checkouts in our library system. "
+						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n";
+				textAreaReport.append(title);
+				for (CheckOut co : checkouts){
+					String info=""+co.getIsbn()+"  "+co.getStart()+"  "+co.getEnd()+"  "+co.getCardNumber()+"  "+co.getIdNumber()+"\n";
+					textAreaReport.append(info);
+				}			
+			}
+		});
 		btnAlloverduecos.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnAlloverduecos.setBounds(226, 539, 160, 40);
 		panelReport.add(btnAlloverduecos);
 		
 		JButton btnGenrecounts = new JButton("GenreCounts");
+		btnGenrecounts.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();
+				Map<String, Integer> map=new HashMap<String, Integer>();
+				try {
+					map=helper.getGenreCounts();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of  all the genres of books that have been checked out and a count for each genre. The counts are in decreasing order. "
+						+ "The columns are genre name and counts.\n";
+				textAreaReport.append(title);
+				for(Map.Entry<String, Integer> entry:map.entrySet()){     
+					String info=""+entry.getKey()+"  "+entry.getValue()+"\n";
+					textAreaReport.append(info);
+				}  
+			}
+		});
 		btnGenrecounts.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnGenrecounts.setBounds(421, 539, 160, 40);
 		panelReport.add(btnGenrecounts);
 		
 		JButton btnToppublisher = new JButton("TopPublishers");
+		btnToppublisher.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();
+				HashMap<String, Integer> map=new HashMap<String, Integer>();
+				try {
+					map=helper.getTopPublishers();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of the name(s) of the top publisher(s) and the number of books the publishers are associated with. "
+						+ "The top publisher has the most number of books with the publisher name in the library. "
+						+ "The columns are publisher name and counts.\n";
+				textAreaReport.append(title);
+				for(Map.Entry<String, Integer> entry:map.entrySet()){     
+					String info=""+entry.getKey()+"  "+entry.getValue()+"\n";
+					textAreaReport.append(info);
+				}  
+			}
+		});
 		btnToppublisher.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnToppublisher.setBounds(618, 539, 160, 40);
 		panelReport.add(btnToppublisher);
 		
 		JButton btnOutofstockbooks = new JButton("OutOfStockBooks");
+		btnOutofstockbooks.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();
+				HashMap<String, Integer> map=new HashMap<String, Integer>();
+				ArrayList<String> results=new ArrayList<String>();
+				try {
+					results=helper.getOutofStockBooks();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of titles of the books that are not available (out of stock) at the library.\n";
+				textAreaReport.append(title);
+				for(String str:results){     
+					textAreaReport.append(str+"\n");
+				}  
+			}
+		});
 		btnOutofstockbooks.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnOutofstockbooks.setBounds(817, 539, 160, 40);
 		panelReport.add(btnOutofstockbooks);
