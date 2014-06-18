@@ -22,7 +22,7 @@ public class CheckOutHelper {
 	 */
 	public void checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
 		
-		if(b == null){
+		if(b == null || b.getCurrentQuantity() == 0){
 			return;
 		}
 		
@@ -59,6 +59,14 @@ public class CheckOutHelper {
 				preparedStatement.setInt(5, idNumber);
 				
 				// Store the checkout transaction in the database
+				preparedStatement.executeUpdate();
+				
+		 		// Decrement the current quantity by 1
+				preparedStatement = connect.prepareStatement("UPDATE Book " + 
+				"SET currentQuantity = currentQuantity - 1 " + 
+				"WHERE isbn = ?");
+						
+				preparedStatement.setLong(1, b.getIsbn());
 				preparedStatement.executeUpdate();
 				
 			}
@@ -133,6 +141,14 @@ public class CheckOutHelper {
 				
 				 // Store the return transaction in the database
 				 preparedStatement.executeUpdate();
+				 
+			 		// Increment the current quantity by 1
+					preparedStatement = connect.prepareStatement("UPDATE Book " + 
+					"SET currentQuantity = currentQuantity + 1 " + 
+					"WHERE isbn = ?");
+							
+					preparedStatement.setLong(1, isbn);
+					preparedStatement.executeUpdate();
 				 
 				 double oneDay = 1 * 24 * 60 * 60 * 1000;
 				 
@@ -225,14 +241,17 @@ public class CheckOutHelper {
 		ResultSet resultSet = null;
 		Statement statement = null;
 		CheckOut co = new CheckOut();
+		ReportHelper rHelper = new ReportHelper();
 		
 		try {
 			
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			resultSet = statement.executeQuery("SELECT * FROM CheckOut c WHERE c.isbn = " + isbn + " AND c.cardNumber = " + patronNum
-					+ " AND c.end <= ALL (SELECT end FROM CheckOut WHERE isbn = " + isbn + " AND cardNumber = " + patronNum + ")");
+			rHelper.createCheckOutView();
+			
+			resultSet = statement.executeQuery("SELECT * FROM NoCheckOutReturn NRC WHERE NRC.isbn = " + isbn + " AND NRC.cardNumber = " + patronNum
+					+ " AND NRC.end <= ALL (SELECT end FROM NoCheckOutReturn WHERE isbn = " + isbn + " AND cardNumber = " + patronNum + ")");
 			
 			if(resultSet.next()){
 				co.setIsbn(resultSet.getLong(1));
@@ -243,6 +262,8 @@ public class CheckOutHelper {
 			} else {
 				return null;
 			}
+			
+			statement.executeUpdate("DROP VIEW NoCheckOutReturn");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
