@@ -572,8 +572,8 @@ public class ReportHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
-			resultSet = statement.executeQuery("SELECT avg(TIMESTAMPDIFF(SECOND, start, end)), "
-					+ "p.name FROM Patron p, Checkout c WHERE p.cardNumber = c.cardNumber "
+			resultSet = statement.executeQuery("SELECT avg(TIMESTAMPDIFF(SECOND, start, returned)), "
+					+ "p.name FROM Patron p, Returns r WHERE p.cardNumber = r.cardNumber "
 					+ "GROUP BY p.cardNumber, p.name, p.unpaidFees Having p.unpaidFees = "
 					+ "(SELECT max(unpaidFees) FROM Patron)");
 			
