@@ -89,6 +89,59 @@ public class BookHelper {
 		}
 		return found;
 	}
+	
+	/**
+	 * Finds a book by its isbn
+	 * @param isbn isbn of the book
+	 * @return the book if one matches the isbn, otherwise returns null
+	 */
+	public Book getBook(long isbn) {
+		//TODO
+		Book ret = null;
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			rs = st.executeQuery("SELECT isbn, title, description, currentQuantity, totalQuantity, "
+					+ "publisherYear, typeName, idNumber FROM Book WHERE isbn = " + isbn);
+			if(rs.next()) {
+				ret = new Book();
+				ret.setIsbn(rs.getLong(1));
+				ret.setTitle(rs.getString(2));
+				ret.setDescription(rs.getString(3));
+				ret.setCurrentQuantity(rs.getInt(4));
+				ret.setTotalQuantity(rs.getInt(5));
+				ret.setPublishYear((Integer)rs.getObject(6));
+				ret.setTypeName(rs.getString(7));
+				ret.setIdNumber(rs.getInt(8));
+				//Get authors
+				ret.setAuthor(getAuthors(ret.getIsbn(), st, rs));
+				//Get publishers
+				ret.setPublisher(getPublishers(ret.getIsbn(), st, rs));
+				//Get search genres
+				ret.setSearchGenre(getSearchGenres(ret.getIsbn(), st, rs));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
+	}
 
 	/**
 	 * Adds a given book to the book table and the relationship tables for books

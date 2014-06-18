@@ -58,6 +58,20 @@ public class BookHelperTest {
 		assertTrue(res.get(0).equals(harry));
 	}
 
+	@Test
+	public void testGetBook() {
+		//Find expected book in the database
+		Book found = bh.getBook(harry.getIsbn());
+		assertTrue(harry.equals(found));
+		
+		//Add test book and find it
+		bh.addBook(b);
+		found = bh.getBook(-1);
+		assertTrue(b.equals(found));
+		
+		//Remove test books
+		bh.deleteBook(-1);
+	}
 
 	@Test
 	public void testAddBook() {
