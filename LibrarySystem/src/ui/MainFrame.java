@@ -4,11 +4,10 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.Timestamp;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,11 +22,27 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import data.*;
-import dbhelper.*;
+import data.Author;
+import data.Book;
+import data.Category;
+import data.CheckOut;
+import data.Librarian;
+import data.Patron;
+import data.Publisher;
+import data.SearchGenre;
+import dbhelper.BookHelper;
+import dbhelper.CategoryHelper;
+import dbhelper.CheckOutHelper;
+import dbhelper.LibrarianHelper;
+import dbhelper.PatronHelper;
+import dbhelper.ReportHelper;
 
 public class MainFrame extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTabbedPane tabbedPaneMain;
 	private JLabel lblWelcomeToSpicy;
@@ -145,11 +160,11 @@ public class MainFrame extends JFrame {
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				BookHelper bookHelper = new BookHelper();
+				DefaultTableModel tableModel = (DefaultTableModel)tableBook.getModel();
+				tableModel.setRowCount(0);
 				String searchKeyword=textFieldSearch.getText();
 				ArrayList<Book> result=bookHelper.keywordSearch(searchKeyword);
-				if ((result!=null) && (!result.isEmpty())){
-					DefaultTableModel tableModel = (DefaultTableModel)tableBook.getModel();
-					tableModel.setColumnCount(0);
+				if ((result!=null) && (!result.isEmpty())){					
 					for (Book book : result){
 						String isbn=book.getIsbn()+"";
 						String title=book.getTitle();
@@ -199,8 +214,8 @@ public class MainFrame extends JFrame {
 					tabbedPaneMain.setEnabledAt(2, true);
 					tabbedPaneMain.setEnabledAt(3, true);
 					tabbedPaneMain.setEnabledAt(4, true);
-					labelLibrarian1.setText("Hello librarian "+currentLibrarian.getName()+", your librarian ID is "+currentLibrarian.getIdNumber()+".");
-					labelLibrarian2.setText("Hello librarian "+currentLibrarian.getName()+", your librarian ID is "+currentLibrarian.getIdNumber()+".");
+					labelLibrarian1.setText("Hello "+currentLibrarian.getName()+", your ID is "+currentLibrarian.getIdNumber()+".");
+					labelLibrarian2.setText("Hello "+currentLibrarian.getName()+", your ID is "+currentLibrarian.getIdNumber()+".");
 				}				
 				else{
 					JOptionPane.showMessageDialog(null, "Wrong ID!", "Error",JOptionPane.ERROR_MESSAGE);
@@ -239,7 +254,7 @@ public class MainFrame extends JFrame {
 		
 		labelLibrarian1 = new JLabel("Hello Librarian Ben, your ID is xxxxxx");
 		labelLibrarian1.setFont(new Font("Times New Roman", Font.BOLD, 36));
-		labelLibrarian1.setBounds(310, 10, 700, 60);
+		labelLibrarian1.setBounds(310, 10, 810, 60);
 		panelBooks.add(labelLibrarian1);
 		
 		lblIsbn = new JLabel("ISBN");
@@ -600,7 +615,7 @@ public class MainFrame extends JFrame {
 				ArrayList<Category> result=categoryHelper.getAllCategory();
 				if ((result!=null) && (!result.isEmpty())){
 					DefaultTableModel tableModel = (DefaultTableModel)tableCategory.getModel();
-					tableModel.setColumnCount(0);
+					tableModel.setRowCount(0);
 					for (Category category : result){
 						String name=category.getName();
 						String id=category.getIdNumber()+"";
@@ -718,7 +733,7 @@ public class MainFrame extends JFrame {
 		
 		labelLibrarian2 = new JLabel("Hello Librarian Ben, your ID is xxxxxx");
 		labelLibrarian2.setFont(new Font("Times New Roman", Font.BOLD, 36));
-		labelLibrarian2.setBounds(310, 10, 700, 60);
+		labelLibrarian2.setBounds(310, 10, 811, 60);
 		panelManagement.add(labelLibrarian2);
 		
 		JLabel lblCardnumber = new JLabel("CardNumber");
@@ -884,7 +899,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				LibrarianHelper helper=new LibrarianHelper();
 				String keyword=textFieldLibId.getText();
-				ArrayList<Librarian> results=helper.searchLibrarian("idName", keyword);
+				ArrayList<Librarian> results=helper.searchLibrarian("idNumber", keyword);
 				if ((results!=null) && (!results.isEmpty())){
 					Librarian lib=results.get(0);
 					textFieldLibName.setText(lib.getName());
@@ -959,11 +974,12 @@ public class MainFrame extends JFrame {
 		buttonSearchLibName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LibrarianHelper helper=new LibrarianHelper();
-				String keyword=textFieldLibId.getText();
+				String keyword=textFieldLibName.getText();
 				ArrayList<Librarian> results=helper.searchLibrarian("Name", keyword);
 				if ((results!=null) && (!results.isEmpty())){
 					Librarian lib=results.get(0);
 					textFieldLibName.setText(lib.getName());
+					textFieldLibId.setText(lib.getIdNumber()+"");
 					textFieldLibAddress.setText(lib.getAddress());
 				}	
 				else{
@@ -984,6 +1000,7 @@ public class MainFrame extends JFrame {
 				if ((results!=null) && (!results.isEmpty())){
 					Patron patron=results.get(0);
 					textFieldCardNumber.setText(patron.getCardNumber()+"");
+					textFieldPatronName.setText(patron.getName());
 					textFieldPatronPhone.setText(patron.getPhone()+"");
 					textFieldPatronAddress.setText(patron.getAddress());
 					textFieldPatronUnpaid.setText(patron.getUnpaidFees()+"");
@@ -1014,6 +1031,8 @@ public class MainFrame extends JFrame {
 		textAreaReport = new JTextArea();
 		textAreaReport.setText("Here will be the generated reports.");
 		textAreaReport.setEditable(false);
+		textAreaReport.setLineWrap(true);
+		textAreaReport.setWrapStyleWord(true);
 		scrollPaneReport.setViewportView(textAreaReport);
 		
 		JButton btnAllcheckout = new JButton("AllCheckOuts");
