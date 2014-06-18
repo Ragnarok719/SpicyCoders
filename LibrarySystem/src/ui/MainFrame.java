@@ -1139,7 +1139,7 @@ public class MainFrame extends JFrame {
 					e1.printStackTrace();
 				}
 				textAreaReport.setText("");
-				String title="The following is the generated report of all the checkouts in our library system. "
+				String title="The following is the generated report of all the checkouts in our library system.\n"
 						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n"
 						+ "We have "+checkouts.size()+" tuples in total.\n";
 				textAreaReport.append(title);
@@ -1166,7 +1166,7 @@ public class MainFrame extends JFrame {
 					e1.printStackTrace();
 				}
 				textAreaReport.setText("");
-				String title="The following is the generated report of all the overdued checkouts in our library system. "
+				String title="The following is the generated report of all the overdued checkouts in our library system.\n"
 						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n"
 						+ "We have "+checkouts.size()+" tuples in total.\n";
 				textAreaReport.append(title);
@@ -1193,7 +1193,7 @@ public class MainFrame extends JFrame {
 					e1.printStackTrace();
 				}
 				textAreaReport.setText("");
-				String title="The following is the generated report of  all the genres of books that have been checked out and a count for each genre. The counts are in decreasing order. "
+				String title="The following is the generated report of  all the genres of books that have been checked out and a count for each genre. The counts are in decreasing order.\n"
 						+ "The columns are genre name and counts.\n"+ "We have "+map.size()+" tuples in total.\n";
 				textAreaReport.append(title);
 				for(Map.Entry<String, Integer> entry:map.entrySet()){     
@@ -1219,7 +1219,7 @@ public class MainFrame extends JFrame {
 					e1.printStackTrace();
 				}
 				textAreaReport.setText("");
-				String title="The following is the generated report of the name(s) of the top publisher(s) and the number of books the publishers are associated with. "
+				String title="The following is the generated report of the name(s) of the top publisher(s) and the number of books the publishers are associated with.\n"
 						+ "The top publisher has the most number of books with the publisher name in the library. "
 						+ "The columns are publisher name and counts.\n"+ "We have "+map.size()+" tuples in total.\n";;
 				textAreaReport.append(title);
@@ -1267,8 +1267,13 @@ public class MainFrame extends JFrame {
 				long[] isbn=new long[count];
 				String isbns=textAreaIsbn.getText();
 				String[] isbnss=isbns.split("\n");
-				for (int i=0;i<count;i++)
-					isbn[i]=Long.parseLong(isbnss[i].trim());
+				try{
+					for (int i=0;i<count;i++)
+						isbn[i]=Long.parseLong(isbnss[i].trim());
+				}catch(NumberFormatException ee){
+					JOptionPane.showMessageDialog(null, "Invalid input!", "Error",JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				ArrayList<Patron> results=new ArrayList<Patron>();
 				try {
 					results=helper.getSuperPatrons(isbn);
@@ -1276,15 +1281,19 @@ public class MainFrame extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				textAreaReport.setText("");
-				String title="The following is the generated report of patrons who have checked out all the books with the corresponding inputted ISBNs.\n"
-						+ "The columns are card number, number, phone, address and unpaid fees respectively.\n"
-						+ "We have "+results.size()+" tuples in total.\n";
-				textAreaReport.append(title);
-				for(Patron p:results){    
-					String str=""+p.getCardNumber()+"  "+p.getName()+"  "+p.getPhone()+"  "+p.getAddress()+"  "+p.getUnpaidFees()+"\n";
-					textAreaReport.append(str);
-				}  
+				if ((results!=null) && (!results.isEmpty())){	
+					textAreaReport.setText("");
+					String title="The following is the generated report of patrons who have checked out all the books with the corresponding inputted ISBNs.\n"
+							+ "The columns are card number, number, phone, address and unpaid fees respectively.\n"
+							+ "We have "+results.size()+" tuples in total.\n";
+					textAreaReport.append(title);
+					for(Patron p:results){    
+						String str=""+p.getCardNumber()+"  "+p.getName()+"  "+p.getPhone()+"  "+p.getAddress()+"  "+p.getUnpaidFees()+"\n";
+						textAreaReport.append(str);
+					}  
+				}
+				else
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnSuperpatrons.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -1295,5 +1304,30 @@ public class MainFrame extends JFrame {
 		textAreaIsbn.setText("Input ISBNs here.");
 		textAreaIsbn.setBounds(1036, 88, 199, 419);
 		panelReport.add(textAreaIsbn);
+		
+		JButton btnCheckouttimeforpatronswithlargestunpaid = new JButton("CheckOutTimeForPatronsWithLargestUnpaid");
+		btnCheckouttimeforpatronswithlargestunpaid.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ReportHelper helper=new ReportHelper();
+				Map<String, Double> map=new HashMap<String, Double>();
+				try {
+					map=helper.getTimeForLargestUnpaid();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of average book checkout time for each patrons that have the largest unpaid fees.\n"
+						+ "The columns are patron name and average checkout time in days.\n"+ "We have "+map.size()+" tuples in total.\n";;
+				textAreaReport.append(title);
+				for(Map.Entry<String, Double> entry:map.entrySet()){     
+					String info=""+entry.getKey()+"  "+entry.getValue()+"\n";
+					textAreaReport.append(info);
+				}  
+			}
+		});
+		btnCheckouttimeforpatronswithlargestunpaid.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnCheckouttimeforpatronswithlargestunpaid.setBounds(35, 601, 351, 40);
+		panelReport.add(btnCheckouttimeforpatronswithlargestunpaid);
 	}
 }
