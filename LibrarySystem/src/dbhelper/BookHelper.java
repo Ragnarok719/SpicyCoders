@@ -206,6 +206,7 @@ public class BookHelper {
 					st.executeUpdate("INSERT INTO HasSearchGenre(isbn, name) VALUES(" + b.getIsbn() + ",'" + s.getName() + "')");
 				}
 			}
+			worked = true;
 		}catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
