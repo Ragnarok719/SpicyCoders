@@ -949,9 +949,9 @@ public class MainFrame extends JFrame {
 		lblPatronmanagement.setBounds(133, 80, 223, 30);
 		panelManagement.add(lblPatronmanagement);
 		
-		JLabel lblLibrarianmanament = new JLabel("LibrarianManament");
+		JLabel lblLibrarianmanament = new JLabel("LibrarianManagement");
 		lblLibrarianmanament.setFont(new Font("Times New Roman", Font.BOLD, 24));
-		lblLibrarianmanament.setBounds(891, 80, 213, 30);
+		lblLibrarianmanament.setBounds(891, 80, 248, 30);
 		panelManagement.add(lblLibrarianmanament);
 		
 		JLabel lblId = new JLabel("ID");
@@ -1307,6 +1307,7 @@ public class MainFrame extends JFrame {
 		
 		JButton btnCheckouttimeforpatronswithlargestunpaid = new JButton("CheckOutTimeForPatronsWithLargestUnpaid");
 		btnCheckouttimeforpatronswithlargestunpaid.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ReportHelper helper=new ReportHelper();
 				Map<String, Double> map=new HashMap<String, Double>();
