@@ -70,6 +70,21 @@ public class MainFrame extends JFrame {
 	private JButton buttonSearchPatronByName;
 	private JLabel lblDescription;
 	private JTextField textFieldDescription;
+	private JPanel panelCategory;
+	private JScrollPane scrollPaneCategory;
+	private JLabel lblCategoryOperations;
+	private JTable tableCategory;
+	private JButton btnDisplaycategory;
+	private JButton btnAddCategory;
+	private JButton btnGetselected;
+	private JButton btnDeleteselected;
+	private JButton btnUpdate;
+	private JLabel lableCategoryName;
+	private JTextField textFieldCategoryName;
+	private JLabel lblIdnumber;
+	private JLabel lblSupercategoryid;
+	private JTextField textFieldCategoryId;
+	private JTextField textFieldCategorySuper;
 	/**
 	 * Launch the application.
 	 */
@@ -179,6 +194,7 @@ public class MainFrame extends JFrame {
 					tabbedPaneMain.setEnabledAt(1, true);
 					tabbedPaneMain.setEnabledAt(2, true);
 					tabbedPaneMain.setEnabledAt(3, true);
+					tabbedPaneMain.setEnabledAt(4, true);
 					labelLibrarian1.setText("Hello librarian "+currentLibrarian.getName()+", your librarian ID is "+currentLibrarian.getIdNumber()+".");
 					labelLibrarian2.setText("Hello librarian "+currentLibrarian.getName()+", your librarian ID is "+currentLibrarian.getIdNumber()+".");
 				}				
@@ -332,7 +348,7 @@ public class MainFrame extends JFrame {
 		textFieldGenre.setBounds(130, 550, 280, 38);
 		panelBooks.add(textFieldGenre);
 		
-		JButton buttonSearchBook = new JButton("Search");
+		JButton buttonSearchBook = new JButton("SearchByISBN");
 		buttonSearchBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonSearchBook.setBounds(506, 163, 160, 40);
 		panelBooks.add(buttonSearchBook);
@@ -522,10 +538,99 @@ public class MainFrame extends JFrame {
 		textFieldDescription.setBounds(183, 598, 483, 38);
 		panelBooks.add(textFieldDescription);
 		
+		panelCategory = new JPanel();
+		panelCategory.setLayout(null);
+		tabbedPaneMain.addTab("Category", null, panelCategory, null);
+		tabbedPaneMain.setEnabledAt(2, false);
+		
+		scrollPaneCategory = new JScrollPane();
+		scrollPaneCategory.setBounds(10, 106, 519, 546);
+		panelCategory.add(scrollPaneCategory);
+		
+		tableCategory = new JTable();
+		tableCategory.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Name", "IDNumber", "SuperCategoryID"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, true
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		scrollPaneCategory.setViewportView(tableCategory);
+		
+		lblCategoryOperations = new JLabel("Category Operations");
+		lblCategoryOperations.setFont(new Font("Times New Roman", Font.BOLD, 30));
+		lblCategoryOperations.setBounds(464, 30, 288, 36);
+		panelCategory.add(lblCategoryOperations);
+		
+		btnDisplaycategory = new JButton("DisplayCategory");
+		btnDisplaycategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnDisplaycategory.setBounds(640, 160, 160, 40);
+		panelCategory.add(btnDisplaycategory);
+		
+		btnAddCategory = new JButton("AddCategory");
+		btnAddCategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnAddCategory.setBounds(640, 238, 160, 40);
+		panelCategory.add(btnAddCategory);
+		
+		btnGetselected = new JButton("GetSelected");
+		btnGetselected.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnGetselected.setBounds(640, 318, 160, 40);
+		panelCategory.add(btnGetselected);
+		
+		btnDeleteselected = new JButton("DeleteSelected");
+		btnDeleteselected.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnDeleteselected.setBounds(640, 398, 160, 40);
+		panelCategory.add(btnDeleteselected);
+		
+		btnUpdate = new JButton("Update");
+		btnUpdate.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnUpdate.setBounds(640, 478, 160, 40);
+		panelCategory.add(btnUpdate);
+		
+		lableCategoryName = new JLabel("Name");
+		lableCategoryName.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		lableCategoryName.setBounds(884, 150, 147, 38);
+		panelCategory.add(lableCategoryName);
+		
+		textFieldCategoryName = new JTextField();
+		textFieldCategoryName.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		textFieldCategoryName.setColumns(10);
+		textFieldCategoryName.setBounds(884, 205, 280, 38);
+		panelCategory.add(textFieldCategoryName);
+		
+		lblIdnumber = new JLabel("IDNumber");
+		lblIdnumber.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		lblIdnumber.setBounds(884, 271, 147, 38);
+		panelCategory.add(lblIdnumber);
+		
+		lblSupercategoryid = new JLabel("SuperCategoryID");
+		lblSupercategoryid.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		lblSupercategoryid.setBounds(888, 390, 195, 38);
+		panelCategory.add(lblSupercategoryid);
+		
+		textFieldCategoryId = new JTextField();
+		textFieldCategoryId.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		textFieldCategoryId.setColumns(10);
+		textFieldCategoryId.setBounds(884, 331, 280, 38);
+		panelCategory.add(textFieldCategoryId);
+		
+		textFieldCategorySuper = new JTextField();
+		textFieldCategorySuper.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		textFieldCategorySuper.setColumns(10);
+		textFieldCategorySuper.setBounds(884, 450, 280, 38);
+		panelCategory.add(textFieldCategorySuper);
+		
 		JPanel panelManagement = new JPanel();
 		panelManagement.setLayout(null);
 		tabbedPaneMain.addTab("Management", null, panelManagement, null);
-		tabbedPaneMain.setEnabledAt(2, false);
+		tabbedPaneMain.setEnabledAt(3, false);
 		
 		labelLibrarian2 = new JLabel("Hello Librarian Ben, your ID is xxxxxx");
 		labelLibrarian2.setFont(new Font("Times New Roman", Font.BOLD, 36));
@@ -587,7 +692,7 @@ public class MainFrame extends JFrame {
 		textFieldPatronUnpaid.setBounds(200, 356, 213, 38);
 		panelManagement.add(textFieldPatronUnpaid);
 		
-		JButton buttonSearchPatronByNum = new JButton("Search");
+		JButton buttonSearchPatronByNum = new JButton("SearchByNumber");
 		buttonSearchPatronByNum.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PatronHelper helper=new PatronHelper();
@@ -810,7 +915,7 @@ public class MainFrame extends JFrame {
 		
 		JPanel panelReport = new JPanel();
 		tabbedPaneMain.addTab("Report", null, panelReport, null);
-		tabbedPaneMain.setEnabledAt(3, false);
+		tabbedPaneMain.setEnabledAt(4, false);
 		panelReport.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("General Reports for Our Library System");
