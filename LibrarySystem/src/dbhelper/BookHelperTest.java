@@ -93,6 +93,81 @@ public class BookHelperTest {
 		b.setAuthor(harry.getAuthor());
 		b.setPublisher(new ArrayList<Publisher>());
 		assertTrue(!bh.addBook(b));
+		
+		
+	}
+	
+
+	//Test that book will add a publisher, author, or search genre if it's new
+	@Test
+	public void testAddNewBookLists() {
+		Connection conn = null;
+		Statement st = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+		//Create and init new auths, genres, and pubs
+		ArrayList<Author> auths = new ArrayList<Author>();
+		ArrayList<Publisher> pubs = new ArrayList<Publisher>();
+		ArrayList<SearchGenre> genres = new ArrayList<SearchGenre>();
+		SearchGenre g1 = new SearchGenre();
+		SearchGenre g2 = new SearchGenre();
+		SearchGenre g3 = new SearchGenre();
+		g1.setName("Test1");
+		g2.setName("Test2");
+		g3.setName("Test3");
+		genres.add(g1);
+		genres.add(g2);
+		genres.add(g3);
+		
+		Author a1 = new Author();
+		Author a2 = new Author();
+		a1.setName("Test1");
+		a2.setName("Test2");
+		auths.add(a1);
+		auths.add(a2);
+		
+		Publisher p1 = new Publisher();
+		Publisher p2 = new Publisher();
+		p1.setName("Test1");
+		p2.setName("Test2");
+		pubs.add(p1);
+		pubs.add(p2);
+		
+		b.setAuthor(auths);
+		b.setPublisher(pubs);
+		b.setSearchGenre(genres);
+		
+		//Add book
+		bh.addBook(b);
+		//Retrieve and compare
+		ArrayList<Book> found = bh.keywordSearch("Test");
+		assertTrue(found.size() == 1);
+		assertTrue(found.get(0).equals(b));
+		
+		//Delete publishers, authors, and genres. Assume cascades
+		st.executeUpdate("DELETE FROM Publisher WHERE name LIKE '%Test%'");
+		st.executeUpdate("DELETE FROM SearchGenre WHERE name LIKE '%Test%'");
+		st.executeUpdate("DELETE FROM Author WHERE name LIKE '%Test%'");
+		
+		//Delete book and test that it is gone
+		bh.deleteBook(b);
+		found = bh.keywordSearch("Test");
+		assertTrue(found.size() == 0);
+		
+		}catch (Exception e) {
+			fail("Caught exception:" + e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+			} catch (Exception e) {	}
+		}
 	}
 
 	@Test
@@ -104,7 +179,7 @@ public class BookHelperTest {
 		Book empty = new Book();
 		empty.setIsbn(-1);
 		empty.setIdNumber(6);
-		empty.setTypeName("Children's Fiction");
+		empty.setTypeName("Children Fiction");
 		//Add a relationship that shouldn't be changed
 		empty.setAuthor(harry.getAuthor());
 		empty.setPublisher(harry.getPublisher());

@@ -152,6 +152,7 @@ public class BookHelper {
 		Connection conn = null;
 		Statement st = null;
 		PreparedStatement ps = null;
+		ResultSet rs = null;
 		boolean worked = false;
 		//Do nothing if book is not properly instantiated
 		if(b == null)
@@ -181,15 +182,27 @@ public class BookHelper {
 
 			//Add many-to-many relationship values to their respective tables
 			for(Publisher p: b.getPublisher()) {
+				//Add publisher if it isn't already in
+				rs = st.executeQuery("SELECT name FROM Publisher WHERE name = '" + p.getName() +"'");
+				if(!rs.next())
+					st.executeUpdate("INSERT INTO Publisher VALUES('" + p.getName() + "')");
 				st.executeUpdate("INSERT INTO HasPublisher(isbn, name) VALUES(" + b.getIsbn() + ",'" + p.getName() + "')");
 			}
 
 			for(Author a: b.getAuthor()) {
+				//Add author if it isn't already in
+				rs = st.executeQuery("SELECT name FROM Author WHERE name = '" + a.getName() +"'");
+				if(!rs.next())
+					st.executeUpdate("INSERT INTO Author VALUES('" + a.getName() + "')");
 				st.executeUpdate("INSERT INTO HasAuthor(isbn, name) VALUES(" + b.getIsbn() + ",'" + a.getName() + "')");
 			}
 
 			if(b.getSearchGenre() != null) {
 				for(SearchGenre s: b.getSearchGenre()) {
+					//Add genre if it isn't already in
+					rs = st.executeQuery("SELECT name FROM SearchGenre WHERE name = '" + s.getName() +"'");
+					if(!rs.next())
+						st.executeUpdate("INSERT INTO SearchGenre VALUES('" + s.getName() + "')");
 					st.executeUpdate("INSERT INTO HasSearchGenre(isbn, name) VALUES(" + b.getIsbn() + ",'" + s.getName() + "')");
 				}
 			}
@@ -205,6 +218,8 @@ public class BookHelper {
 					st.close();
 				if(ps != null)
 					ps.close();
+				if(rs != null)
+					rs.close();
 			} catch (Exception e) {	}
 		}
 		return worked;
