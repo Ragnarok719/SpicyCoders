@@ -256,8 +256,8 @@ public class CheckOutHelper {
 			
 			rHelper.createCheckOutView();
 			
-			resultSet = statement.executeQuery("SELECT * FROM NoCheckOutReturn NRC WHERE NRC.isbn = " + isbn + " AND NRC.cardNumber = " + patronNum
-					+ " AND NRC.end <= ALL (SELECT end FROM NoCheckOutReturn WHERE isbn = " + isbn + " AND cardNumber = " + patronNum + ")");
+			resultSet = statement.executeQuery("SELECT * FROM NoReturnCheckOut NRC WHERE NRC.isbn = " + isbn + " AND NRC.cardNumber = " + patronNum
+					+ " AND NRC.end <= ALL (SELECT end FROM NoReturnCheckOut WHERE isbn = " + isbn + " AND cardNumber = " + patronNum + ")");
 			
 			if(resultSet.next()){
 				co.setIsbn(resultSet.getLong(1));
@@ -269,7 +269,6 @@ public class CheckOutHelper {
 				return null;
 			}
 			
-			statement.executeUpdate("DROP VIEW NoCheckOutReturn");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -279,6 +278,8 @@ public class CheckOutHelper {
 			finally
 			{
 				try {
+
+					statement.executeUpdate("DROP VIEW NoReturnCheckOut");
 					
 					if(connect != null){
 						connect.close();
@@ -290,6 +291,13 @@ public class CheckOutHelper {
 					
 					
 				} catch (Exception e) {	
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
 					
 				}
 			}
