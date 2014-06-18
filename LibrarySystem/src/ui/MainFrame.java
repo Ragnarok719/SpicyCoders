@@ -239,7 +239,7 @@ public class MainFrame extends JFrame {
 			new Object[][] {
 			},
 			new String[] {
-				"ISBN", "Title", "Author", "Description", "Type", "Category", "CurrentQuantity", "Totaluantity", "Publisher", "PublishYear", "Genre"
+				"ISBN", "Title", "Author", "Description", "Type", "Category", "CurrentQuantity", "TotalQuantity", "Publisher", "PublishYear", "Genre"
 			}
 		) {
 			boolean[] columnEditables = new boolean[] {
@@ -443,17 +443,17 @@ public class MainFrame extends JFrame {
 				ArrayList<SearchGenre> genreList=new ArrayList<SearchGenre>();
 				for (String str:authors){
 					Author author=new Author();
-					author.setName(str);
+					author.setName(str.trim());
 					authorList.add(author);
 				}
 				for (String str:publishers){
 					Publisher publisher=new Publisher();
-					publisher.setName(str);
+					publisher.setName(str.trim());
 					publisherList.add(publisher);
 				}
 				for (String str:genres){
 					SearchGenre genre=new SearchGenre();
-					genre.setName(str);
+					genre.setName(str.trim());
 					genreList.add(genre);
 				}
 				book.setAuthor(authorList);
@@ -497,17 +497,17 @@ public class MainFrame extends JFrame {
 				ArrayList<SearchGenre> genreList=new ArrayList<SearchGenre>();
 				for (String str:authors){
 					Author author=new Author();
-					author.setName(str);
+					author.setName(str.trim());
 					authorList.add(author);
 				}
 				for (String str:publishers){
 					Publisher publisher=new Publisher();
-					publisher.setName(str);
+					publisher.setName(str.trim());
 					publisherList.add(publisher);
 				}
 				for (String str:genres){
 					SearchGenre genre=new SearchGenre();
-					genre.setName(str);
+					genre.setName(str.trim());
 					genreList.add(genre);
 				}
 				book.setAuthor(authorList);
