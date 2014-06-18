@@ -256,7 +256,8 @@ VALUES ('Jack Smith', '5555555', '1234 Madeup St', '0'),
 ('Jane Lambda', '1234567', '9876 Weird Ave', '3'),
 ('Bill Chan', '1235354', '3141 Pi Rd', '10'),
 ('Person Name', '1129284', '1038 Random Rd', '0'),
-('Norman Doorman', '3072846', '1203 Knob Street', '35');
+('Norman Doorman', '3072846', '1203 Knob Street', '35'),
+('Lucy Latesworth', '2342357', '22 Main Street', '35');
 
 
 INSERT
@@ -436,7 +437,11 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='The Hobbit'), '2014-4-5 09:21:14.28', '2014-4-26 09:21:14.28',
 	(SELECT cardNumber FROM Patron WHERE name='Norman Doorman'), (SELECT idNumber FROM Librarian WHERE name='Lily Late')),
 ((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-5-30 10:47:50.13', '2014-6-6 10:47:50.13',
-	(SELECT cardNumber FROM Patron WHERE name='Jane Lambda'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
+	(SELECT cardNumber FROM Patron WHERE name='Jane Lambda'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
+((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-4-23 10:16:50.13', '2014-5-6 10:47:50.13',
+	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
+((SELECT isbn FROM Book WHERE title='Harry Potter and the Chamber of Secrets'), '2014-4-20 1:16:50.13', '2014-4-26 12:47:50.13',
+	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
 
 
 INSERT 
@@ -464,5 +469,14 @@ INTO Returns (isbn, start, end, cardNumber, checkoutId, returned, returnID)
 SELECT isbn, start, end, cardNumber, idNumber, '2014-4-20 12:22:12.23', 
 (SELECT idNumber FROM Librarian WHERE name='Peter Pan') FROM Checkout where start = '2014-04-05 09:21:14';
 
+INSERT 
+INTO Returns (isbn, start, end, cardNumber, checkoutId, returned, returnID)
+SELECT isbn, start, end, cardNumber, idNumber, '2014-5-6 12:34:13.34', 
+(SELECT idNumber FROM Librarian WHERE name='Peter Pan') FROM Checkout where start = '2014-4-20 1:16:50';
+
+INSERT 
+INTO Returns (isbn, start, end, cardNumber, checkoutId, returned, returnID)
+SELECT isbn, start, end, cardNumber, idNumber, '2014-5-26 12:34:13.34', 
+(SELECT idNumber FROM Librarian WHERE name='Clumsy Chad') FROM Checkout where start = '2014-4-23 10:16:50.13';
 
 
