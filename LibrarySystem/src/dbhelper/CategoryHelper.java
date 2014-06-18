@@ -168,6 +168,46 @@ public class CategoryHelper {
 	}
 	
 	/**
+	 * Gets a category by its name
+	 * @param name the name
+	 * @return the first category with matching name or null if none match
+	 */
+	public Category getCategory(String name) {
+		Category ret = null;
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			st=conn.createStatement();
+
+			rs = st.executeQuery("SELECT * FROM Category WHERE name = '" + name + "'");
+			if(rs.next()) {
+				ret = new Category();
+				ret.setIdNumber(rs.getInt("idNumber"));
+				ret.setSuperCategoryId((Integer)rs.getObject("superCategoryId"));
+				ret.setName(rs.getString("name"));
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally
+		{
+			try {
+				if(conn != null)
+					conn.close();
+				if(st != null)
+					st.close();
+				if(rs != null)
+					rs.close();
+			} catch (Exception e) {	}
+		}
+		
+		return ret;
+	}
+	
+	/**
 	 * Gets direct child categories by id of their parent category. Does not search deeper recursively.
 	 * @param idNumber id of parent category
 	 * @return list of direct child categories who have the same parent category id or an empty arraylist if none

@@ -115,7 +115,7 @@ public class CategoryHelperTest {
 	}
 
 	@Test
-	public void testGetCategory() {
+	public void testGetIntCategory() {
 		//Add categories to test
 		ch.addCategory(c);
 		ch.addCategory(sub);
@@ -123,6 +123,21 @@ public class CategoryHelperTest {
 		//Compare retrieved categories to those added
 		assertTrue(ch.getCategory(-1).equals(c));
 		assertTrue(ch.getCategory(-2).equals(sub));
+		
+		//Delete test categories added
+		ch.deleteCategory(-2);
+		ch.deleteCategory(-1);
+	}
+	
+	@Test
+	public void testGetStringCategory() {
+		//Add categories to test
+		ch.addCategory(c);
+		ch.addCategory(sub);
+		
+		//Compare retrieved categories to those added
+		assertTrue(ch.getCategory(c.getName()).equals(c));
+		assertTrue(ch.getCategory(sub.getName()).equals(sub));
 		
 		//Delete test categories added
 		ch.deleteCategory(-2);
