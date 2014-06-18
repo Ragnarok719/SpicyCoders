@@ -203,7 +203,7 @@ public class ReportHelperTest {
 	@Test
 	public void testGetTimeForLargestUnpaid() {
 		Map<String, Double> m = rh.getTimeForLargestUnpaid();
-		assertTrue(m.size() == 1);
+		assertTrue(m.size() == 2);
 		assertTrue(Math.abs(m.get("Norman Doorman")*24*60*60 - 1814400d) < 1);
 	}
 }
