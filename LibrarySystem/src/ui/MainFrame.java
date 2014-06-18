@@ -104,6 +104,7 @@ public class MainFrame extends JFrame {
 	private JTextField textFieldCategoryId;
 	private JTextField textFieldCategorySuper;
 	private JTextArea textAreaReport;
+	private JTextArea textAreaIsbn;
 	/**
 	 * Launch the application.
 	 */
@@ -1055,7 +1056,7 @@ public class MainFrame extends JFrame {
 		panelReport.add(lblNewLabel);
 		
 		JScrollPane scrollPaneReport = new JScrollPane();
-		scrollPaneReport.setBounds(35, 87, 1200, 420);
+		scrollPaneReport.setBounds(35, 87, 962, 420);
 		panelReport.add(scrollPaneReport);
 		
 		textAreaReport = new JTextArea();
@@ -1175,7 +1176,6 @@ public class MainFrame extends JFrame {
 		btnOutofstockbooks.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ReportHelper helper=new ReportHelper();
-				HashMap<String, Integer> map=new HashMap<String, Integer>();
 				ArrayList<String> results=new ArrayList<String>();
 				try {
 					results=helper.getOutofStockBooks();
@@ -1195,5 +1195,42 @@ public class MainFrame extends JFrame {
 		btnOutofstockbooks.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnOutofstockbooks.setBounds(817, 539, 160, 40);
 		panelReport.add(btnOutofstockbooks);
+		
+		JButton btnSuperpatrons = new JButton("SuperPatrons");
+		btnSuperpatrons.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();				
+				int count=textAreaIsbn.getLineCount();
+				long[] isbn=new long[count];
+				String isbns=textAreaIsbn.getText();
+				String[] isbnss=isbns.split("\n");
+				for (int i=0;i<count;i++)
+					isbn[i]=Long.parseLong(isbnss[i]);
+				ArrayList<Patron> results=new ArrayList<Patron>();
+				try {
+					results=helper.getSuperPatrons(isbn);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				textAreaReport.setText("");
+				String title="The following is the generated report of patrons who have checked out all the books with the corresponding inputted ISBNs.\n"
+						+ "The columns are card number, number, phone, address and unpaid fees respectively.\n"
+						+ "We have "+results.size()+" tuples in total.\n";
+				textAreaReport.append(title);
+				for(Patron p:results){    
+					String str=""+p.getCardNumber()+"  "+p.getName()+"  "+p.getPhone()+"  "+p.getAddress()+"  "+p.getUnpaidFees()+"\n";
+					textAreaReport.append(str);
+				}  
+			}
+		});
+		btnSuperpatrons.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnSuperpatrons.setBounds(1022, 539, 160, 40);
+		panelReport.add(btnSuperpatrons);
+		
+		textAreaIsbn = new JTextArea();
+		textAreaIsbn.setText("Input ISBNs here.");
+		textAreaIsbn.setBounds(1036, 88, 199, 419);
+		panelReport.add(textAreaIsbn);
 	}
 }
