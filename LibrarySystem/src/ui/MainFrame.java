@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Date;
+import java.sql.Timestamp;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -364,7 +365,10 @@ public class MainFrame extends JFrame {
 				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
 				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
 				book.setTypeName(textFieldType.getText());
-//				category				
+				String category=textFieldCategory.getText();
+				CategoryHelper chelper=new CategoryHelper();
+				Category cate=chelper.getCategory(category);
+				book.setIdNumber(cate.getIdNumber());
 				
 				String authorStr=textFieldAuthor.getText();
 				String publisherStr=textFieldPublisher.getText();
@@ -414,7 +418,10 @@ public class MainFrame extends JFrame {
 				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
 				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
 				book.setTypeName(textFieldType.getText());
-//				category				
+				String category=textFieldCategory.getText();
+				CategoryHelper chelper=new CategoryHelper();
+				Category cate=chelper.getCategory(category);
+				book.setIdNumber(cate.getIdNumber());
 				
 				String authorStr=textFieldAuthor.getText();
 				String publisherStr=textFieldPublisher.getText();
@@ -503,10 +510,18 @@ public class MainFrame extends JFrame {
 		btnCheckout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
+				BookHelper bhelper=new BookHelper();
 				int isbn=Integer.parseInt(textFieldIsbn2.getText());
+				Book book=bhelper.getBook(isbn);
 				int patron=Integer.parseInt(textFieldPatron.getText());
 				int librarian=currentLibrarian.getIdNumber();
-				Date date=new Date();
+				Timestamp ts = new Timestamp(System.currentTimeMillis());
+				try {
+					helper.checkOut(book,ts,patron,librarian);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 
 			}
 		});
 		btnCheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -520,7 +535,13 @@ public class MainFrame extends JFrame {
 				int isbn=Integer.parseInt(textFieldIsbn2.getText());
 				int patron=Integer.parseInt(textFieldPatron.getText());
 				int librarian=currentLibrarian.getIdNumber();
-				Date date=new Date();
+				Timestamp ts = new Timestamp(System.currentTimeMillis());
+				try {
+					helper.returnBook(ts,isbn,patron,librarian);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 
 			}
 		});
 		btnReturn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -570,6 +591,25 @@ public class MainFrame extends JFrame {
 		panelCategory.add(lblCategoryOperations);
 		
 		btnDisplaycategory = new JButton("DisplayCategory");
+		btnDisplaycategory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CategoryHelper categoryHelper = new CategoryHelper();
+				ArrayList<Category> result=categoryHelper.getAllCategory();
+				if ((result!=null) && (!result.isEmpty())){
+					DefaultTableModel tableModel = (DefaultTableModel)tableCategory.getModel();
+					tableModel.setColumnCount(0);
+					for (Category category : result){
+						String name=category.getName();
+						String id=category.getIdNumber()+"";
+						String superId=category.getSuperCategoryId()+"";	
+						tableModel.addRow(new Object[]{name,id,superId});
+					}
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnDisplaycategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnDisplaycategory.setBounds(640, 160, 160, 40);
 		panelCategory.add(btnDisplaycategory);
