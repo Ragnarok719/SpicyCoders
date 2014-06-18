@@ -104,7 +104,7 @@ public class BookHelperTest {
 		Book empty = new Book();
 		empty.setIsbn(-1);
 		empty.setIdNumber(6);
-		empty.setTypeName("Children's Fiction");
+		empty.setTypeName("Children Fiction");
 		//Add a relationship that shouldn't be changed
 		empty.setAuthor(harry.getAuthor());
 		empty.setPublisher(harry.getPublisher());
