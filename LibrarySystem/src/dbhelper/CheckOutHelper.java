@@ -20,10 +20,10 @@ public class CheckOutHelper {
 	 * @param cardNumber card number of the patron who rents the book
 	 * @param idNumber ID number of the librarian who is performing the checkout
 	 */
-	public void checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
+	public boolean checkOut(Book b, Timestamp startTime, int cardNumber, int idNumber) throws Exception {
 		
 		if(b == null || b.getCurrentQuantity() == 0){
-			return;
+			return false;
 		}
 		
 		Connection connect = null;
@@ -69,8 +69,10 @@ public class CheckOutHelper {
 				preparedStatement.setLong(1, b.getIsbn());
 				preparedStatement.executeUpdate();
 				
+				return true;
 			}
 			
+			return false;
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -107,7 +109,7 @@ public class CheckOutHelper {
 	 * @param patronNum card number of the patron who rents the book
 	 * @param returnID ID number of the librarian who is performing the return
 	 */
-	public void returnBook(Timestamp returnTime, long isbn, int patronNum, int returnID) throws Exception{
+	public boolean returnBook(Timestamp returnTime, long isbn, int patronNum, int returnID) throws Exception{
 		
 		Connection connect = null;
 		ResultSet resultSet = null;
@@ -198,7 +200,11 @@ public class CheckOutHelper {
 					 }					 
 					 
 				 }
+				 
+				 return true;
 			}
+			
+			return false;
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
