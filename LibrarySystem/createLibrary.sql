@@ -442,6 +442,8 @@ VALUES
 ((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-4-23 10:16:50.13', '2014-5-6 10:47:50.13',
 	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
 ((SELECT isbn FROM Book WHERE title='Harry Potter and the Chamber of Secrets'), '2014-4-20 1:16:50.13', '2014-4-26 12:47:50.13',
+	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan')),
+((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-5-15 1:16:50.13', '2014-5-22 12:47:50.13',
 	(SELECT cardNumber FROM Patron WHERE name='Lucy Latesworth'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
 
 
