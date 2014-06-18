@@ -353,15 +353,18 @@ public class ReportHelper {
 			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			statement = connect.createStatement();
 			
+			// Create a view whose table consists of every publisher and also
+			// the number of books in the library the publisher is associated with
+			statement.executeUpdate("CREATE VIEW PublisherCount AS "
+			 					  + "SELECT HP.name AS Pname, COUNT(*) AS Bcount "
+			 					  + "FROM Book B, HasPublisher HP "
+			 					  + "WHERE B.isbn = HP.isbn "
+			 					  + "GROUP BY HP.name");
+			
 			// Select the name(s) of the top publisher(s) and also the book count(s)
-			resultSet = statement.executeQuery("SELECT HP.name, COUNT(*) "
-					+ "FROM Book B, HasPUblisher HP "
-					+ "WHERE B.isbn = HP.isbn "
-					+ "GROUP BY HP.name "
-					+ "HAVING COUNT(*) >= ALL (SELECT COUNT(*) "
-									        + "FROM Book B1, HasPublisher HP1 "
-									        + "WHERE B1.isbn = HP1.isbn "
-									        + "GROUP BY HP1.name)");
+ 			resultSet = statement.executeQuery("SELECT Pname, Bcount "
+ 					+ "FROM PublisherCount "
+ 					+ "WHERE Bcount IN (SELECT MAX(Bcount) FROM PublisherCount)");
 			
 			// Add genres and their counts into collection genreMap one at a time
 			while(resultSet.next()){
@@ -369,6 +372,9 @@ public class ReportHelper {
 				publishersMap.put(resultSet.getString(1), resultSet.getInt(2));
 				
 			}
+			
+			// Delete the view
+			 statement.executeUpdate("DROP VIEW PublisherCount");
 			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
