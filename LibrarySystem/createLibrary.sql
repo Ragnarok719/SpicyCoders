@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS Librarian (
 	name varchar(20), 
 	address varchar(100),
 	PRIMARY KEY (idNumber)
-) AUTO_INCREMENT = 100000;
+) AUTO_INCREMENT = 200000;
 
 CREATE TABLE IF NOT EXISTS Category (
 	name varchar(20),
@@ -162,8 +162,8 @@ INSERT
 INTO BookType(typeName, maxReservation, overdueFee)
 VALUES ('Adult Fiction', '14', '1'),
 ('Adult Nonfiction', '7', '2'),
-('Children\'s Fiction', '21', '1'),
-('Children\'s Nonfiction', '21', '1'),
+('Children Fiction', '21', '1'),
+('Children Nonfiction', '21', '1'),
 ('Audiobooks', '14', '3'),
 ('Reference Books', '2', '3');
 
@@ -273,13 +273,13 @@ INSERT
 INTO Book(isbn, title, description, currentQuantity, totalQuantity, publisherYear, idNumber, typeName)
 VALUES 
 ('9780590353427', 'Harry Potter and the Sorcerer\'s Stone', 'Harry Potter goes to Hogwarts.', '1', '3', '1999',
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9780439064873', 'Harry Potter and the Chamber of Secrets', 'Harry Potter fights a basilisk.', '2', '2', '2000',
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9780545139700', 'Harry Potter and the Deathly Hallows', 'The final Harry Potter book.', '0', '2', '2009',
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9780547928227', 'The Hobbit', 'In a hole in the ground there lived a hobbit.', '2', '5', '2012',
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9780072465631', 'Database Management Systems', 'CPSC 304 Textbook', '0', '1', '2003',
 	(SELECT idNumber FROM Category WHERE name='Databases'), (SELECT typeName FROM BookType WHERE typeName='Reference Books')),
 ('9780321834843', 'Biological Science', 'First Year Biology Textbook', '0', '2', '2012',
@@ -289,7 +289,7 @@ VALUES
 ('9780141036144', '1984', 'Doublethink. Big Brother. Doublespeak.', '2', '2', '2008', 
 	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
 ('9780394800165', 'Green Eggs and Ham', '"I do not like green eggs and ham. I do not like them, Sam-I-Am."', '1', '3', '1960', 
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9781455525256', 'Gordon Ramsay\'s Home Cooking: Everything You Need to Know to Make Fabulous Food', 
 	'From the chef known for being mean in his cooking shows.', '0', '1', '2013', 
 	(SELECT idNumber FROM Category WHERE name='Cooking'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
@@ -300,7 +300,7 @@ VALUES
 	'Introversion isn\'t bad.', '1', '1', '2013', 
 	(SELECT idNumber FROM Category WHERE name='Psychology'), (SELECT typeName FROM BookType WHERE typeName='Adult Nonfiction')),
 ('9780920668375', 'Love You Forever', 'The cover of the book has a kid messing up the bathroom.', '3', '4', '1995', 
-	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children\'s Fiction')),
+	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Children Fiction')),
 ('9781401225759', 'The Sandman Vol. 1: Preludes & Nocturnes', 'A graphic novel epic.', '1', '2', '2010', 
 	(SELECT idNumber FROM Category WHERE name='Literature'), (SELECT typeName FROM BookType WHERE typeName='Adult Fiction')),
 ('9780544272996', 'What If?: Serious Scientific Answers to Absurd Hypothetical Questions', 
@@ -418,7 +418,7 @@ VALUES
 	(SELECT cardNumber FROM Patron WHERE name='Person Name'), (SELECT idNumber FROM Librarian WHERE name='Clumsy Chad')),
 ((SELECT isbn FROM Book WHERE title='The Hobbit'), '2014-4-5 09:21:14.28', '2014-4-26 09:21:14.28',
 	(SELECT cardNumber FROM Patron WHERE name='Norman Doorman'), (SELECT idNumber FROM Librarian WHERE name='Lily Late')),
-((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-5-30 10:47:50.13', '2014-5-6 10:47:50.13',
+((SELECT isbn FROM Book WHERE title='Biological Science'), '2014-5-30 10:47:50.13', '2014-6-6 10:47:50.13',
 	(SELECT cardNumber FROM Patron WHERE name='Jane Lambda'), (SELECT idNumber FROM Librarian WHERE name='Peter Pan'));
 
 

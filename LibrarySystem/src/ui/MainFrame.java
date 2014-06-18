@@ -368,6 +368,34 @@ public class MainFrame extends JFrame {
 		panelBooks.add(textFieldGenre);
 		
 		JButton buttonSearchBook = new JButton("SearchByISBN");
+		buttonSearchBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				BookHelper helper=new BookHelper();
+				Long isbn=Long.parseLong(textFieldIsbn.getText());
+				Book book=helper.getBook(isbn);
+				textFieldTitle.setText(book.getTitle());
+				textFieldDescription.setText(book.getDescription());
+				textFieldCurrentQ.setText(book.getCurrentQuantity()+"");
+				textFieldTotalQ.setText(book.getTotalQuantity()+"");
+				textFieldPulishYear.setText(book.getPublishYear()+"");
+				textFieldType.setText(book.getTypeName());
+				CategoryHelper chelper=new CategoryHelper();
+				String category=chelper.getCategory(book.getIdNumber()).getName();
+				textFieldCategory.setText(category);
+				String author="";
+				String publisher="";
+				String genre="";
+				for (Author a:book.getAuthor())
+					author=author+a.getName();
+				for (Publisher p:book.getPublisher())
+					publisher=publisher+p.getName();
+				for (SearchGenre g:book.getSearchGenre())
+					genre=genre+g.getName();
+				textFieldAuthor.setText(author);
+				textFieldPublisher.setText(publisher);
+				textFieldGenre.setText(genre);
+			}
+		});
 		buttonSearchBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonSearchBook.setBounds(506, 163, 160, 40);
 		panelBooks.add(buttonSearchBook);
@@ -376,7 +404,7 @@ public class MainFrame extends JFrame {
 		buttonAddBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
 				book.setTitle(textFieldTitle.getText());
 				book.setDescription(textFieldDescription.getText());
 				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
@@ -429,7 +457,7 @@ public class MainFrame extends JFrame {
 		buttonUpdateBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
 				book.setTitle(textFieldTitle.getText());
 				book.setDescription(textFieldDescription.getText());
 				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
@@ -482,7 +510,7 @@ public class MainFrame extends JFrame {
 		buttonDeleteBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Book book=new Book();
-				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				book.setIsbn(Long.parseLong(textFieldIsbn.getText()));
 				BookHelper helper=new BookHelper();
 				helper.deleteBook(book);		
 				JOptionPane.showMessageDialog(null, "Delete book with isbn "+book.getIsbn(), "Delete book", JOptionPane.PLAIN_MESSAGE);
@@ -529,7 +557,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
 				BookHelper bhelper=new BookHelper();
-				int isbn=Integer.parseInt(textFieldIsbn2.getText());
+				long isbn=Long.parseLong(textFieldIsbn2.getText());
 				Book book=bhelper.getBook(isbn);
 				int patron=Integer.parseInt(textFieldPatron.getText());
 				int librarian=currentLibrarian.getIdNumber();
@@ -540,6 +568,7 @@ public class MainFrame extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
+				JOptionPane.showMessageDialog(null, "Check out the book with isbn="+book.getIsbn()+" for patron whose id="+patron, "CheckOut",JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		btnCheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -550,7 +579,7 @@ public class MainFrame extends JFrame {
 		btnReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CheckOutHelper helper=new CheckOutHelper();
-				int isbn=Integer.parseInt(textFieldIsbn2.getText());
+				long isbn=Long.parseLong(textFieldIsbn2.getText());
 				int patron=Integer.parseInt(textFieldPatron.getText());
 				int librarian=currentLibrarian.getIdNumber();
 				Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -560,6 +589,7 @@ public class MainFrame extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} 
+				JOptionPane.showMessageDialog(null, "Return the book with isbn="+isbn+" for patron whose id="+patron, "Return",JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		btnReturn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -836,7 +866,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				Patron patron=new Patron();
 				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
-				patron.setName(textFieldLibName.getText());
+				patron.setName(textFieldPatronName.getText());
 				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText()));
 				patron.setAddress(textFieldPatronAddress.getText());
 				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText()));
@@ -1051,7 +1081,8 @@ public class MainFrame extends JFrame {
 				}
 				textAreaReport.setText("");
 				String title="The following is the generated report of all the checkouts in our library system. "
-						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n";
+						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n"
+						+ "We have "+checkouts.size()+" tuples in total.\n";
 				textAreaReport.append(title);
 				for (CheckOut co : checkouts){
 					String info=""+co.getIsbn()+"  "+co.getStart()+"  "+co.getEnd()+"  "+co.getCardNumber()+"  "+co.getIdNumber()+"\n";
@@ -1076,7 +1107,8 @@ public class MainFrame extends JFrame {
 				}
 				textAreaReport.setText("");
 				String title="The following is the generated report of all the overdued checkouts in our library system. "
-						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n";
+						+ "The columns are ISBN of book, start date, end date, patron's card number and librarian's id respectively.\n"
+						+ "We have "+checkouts.size()+" tuples in total.\n";
 				textAreaReport.append(title);
 				for (CheckOut co : checkouts){
 					String info=""+co.getIsbn()+"  "+co.getStart()+"  "+co.getEnd()+"  "+co.getCardNumber()+"  "+co.getIdNumber()+"\n";
@@ -1101,7 +1133,7 @@ public class MainFrame extends JFrame {
 				}
 				textAreaReport.setText("");
 				String title="The following is the generated report of  all the genres of books that have been checked out and a count for each genre. The counts are in decreasing order. "
-						+ "The columns are genre name and counts.\n";
+						+ "The columns are genre name and counts.\n"+ "We have "+map.size()+" tuples in total.\n";
 				textAreaReport.append(title);
 				for(Map.Entry<String, Integer> entry:map.entrySet()){     
 					String info=""+entry.getKey()+"  "+entry.getValue()+"\n";
@@ -1127,7 +1159,7 @@ public class MainFrame extends JFrame {
 				textAreaReport.setText("");
 				String title="The following is the generated report of the name(s) of the top publisher(s) and the number of books the publishers are associated with. "
 						+ "The top publisher has the most number of books with the publisher name in the library. "
-						+ "The columns are publisher name and counts.\n";
+						+ "The columns are publisher name and counts.\n"+ "We have "+map.size()+" tuples in total.\n";;
 				textAreaReport.append(title);
 				for(Map.Entry<String, Integer> entry:map.entrySet()){     
 					String info=""+entry.getKey()+"  "+entry.getValue()+"\n";
@@ -1152,7 +1184,8 @@ public class MainFrame extends JFrame {
 					e1.printStackTrace();
 				}
 				textAreaReport.setText("");
-				String title="The following is the generated report of titles of the books that are not available (out of stock) at the library.\n";
+				String title="The following is the generated report of titles of the books that are not available (out of stock) at the library.\n"
+						+ "We have "+results.size()+" tuples in total.\n";
 				textAreaReport.append(title);
 				for(String str:results){     
 					textAreaReport.append(str+"\n");
