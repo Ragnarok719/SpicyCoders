@@ -157,6 +157,21 @@ CREATE TABLE IF NOT EXISTS Returns (
 	ON UPDATE CASCADE
 );
 
+/* Assertions for relationships with total participation for both entities (NOTE: handled at application level)
+CREATE ASSERTION AuthorParticipation
+CHECK (( SELECT COUNT (DISTINCT (H.name)) FROM HasAuthor H ) - ( SELECT COUNT (DISTINCT (A.name)) FROM Author A ) = 0)
+
+CREATE ASSERTION BookAuthParticipation
+CHECK (( SELECT COUNT (DISTINCT (H.isbn)) FROM HasAuthor H ) - ( SELECT COUNT (DISTINCT (B.isbn)) FROM Book B ) = 0)
+
+CREATE ASSERTION PublisherParticipation
+CHECK (( SELECT COUNT (DISTINCT (H.name)) FROM HasPublisher H ) - ( SELECT COUNT (DISTINCT (P.name)) FROM Publisher P ) = 0)
+
+CREATE ASSERTION BookPubParticipation
+CHECK (( SELECT COUNT (DISTINCT (H.isbn)) FROM HasPublisher H ) - ( SELECT COUNT (DISTINCT (B.isbn)) FROM Book B ) = 0)
+*/
+
+
 
 # Populate tables
 
