@@ -1,34 +1,27 @@
 package ui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-
 import java.awt.Font;
-
-import javax.swing.JTextField;
-import javax.swing.JTabbedPane;
-import javax.swing.JButton;
-
-import dbhelper.*;
-import data.*;
-
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 
-import javax.swing.JList;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.AbstractListModel;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import data.*;
+import dbhelper.*;
 
 public class MainFrame extends JFrame {
 
@@ -38,7 +31,6 @@ public class MainFrame extends JFrame {
 	private JPanel panelBooks;
 	private JTextField textFieldSearch;
 	private JButton btnLibrarianEntrance;
-	private JButton buttonAdvanced;
 
 	private Librarian currentLibrarian=null;
 	private JScrollPane scrollPaneBook;
@@ -75,6 +67,9 @@ public class MainFrame extends JFrame {
 	private JTextField textFieldLibName;
 	private JLabel labelLibrarian2;
 	private JTextField textFieldLibAddress;
+	private JButton buttonSearchPatronByName;
+	private JLabel lblDescription;
+	private JTextField textFieldDescription;
 	/**
 	 * Launch the application.
 	 */
@@ -160,7 +155,10 @@ public class MainFrame extends JFrame {
 							genre=genre+ g.getName()+";";						
 						tableModel.addRow(new Object[]{isbn,title,author,description,type,category,currentQ,totalQ,publisher,year,genre});
 					}
-				}		
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		btnSearch.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -192,15 +190,6 @@ public class MainFrame extends JFrame {
 		btnLibrarianEntrance.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnLibrarianEntrance.setBounds(1099, 76, 160, 40);
 		panelMain.add(btnLibrarianEntrance);
-		
-		buttonAdvanced = new JButton("Advanced Search");
-		buttonAdvanced.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		buttonAdvanced.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonAdvanced.setBounds(1099, 29, 160, 40);
-		panelMain.add(buttonAdvanced);
 		
 		scrollPaneBook = new JScrollPane();
 		scrollPaneBook.setBounds(10, 124, 1249, 528);
@@ -235,112 +224,112 @@ public class MainFrame extends JFrame {
 		
 		lblIsbn = new JLabel("ISBN");
 		lblIsbn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblIsbn.setBounds(43, 165, 60, 38);
+		lblIsbn.setBounds(40, 119, 60, 38);
 		panelBooks.add(lblIsbn);
 		
 		textFieldIsbn = new JTextField();
 		textFieldIsbn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		textFieldIsbn.setBounds(113, 165, 300, 38);
+		textFieldIsbn.setBounds(110, 119, 300, 38);
 		panelBooks.add(textFieldIsbn);
 		textFieldIsbn.setColumns(10);
 		
 		lblTitle = new JLabel("Title");
 		lblTitle.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblTitle.setBounds(43, 213, 60, 38);
+		lblTitle.setBounds(40, 167, 60, 38);
 		panelBooks.add(lblTitle);
 		
 		textFieldTitle = new JTextField();
 		textFieldTitle.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldTitle.setColumns(10);
-		textFieldTitle.setBounds(113, 213, 300, 38);
+		textFieldTitle.setBounds(110, 167, 300, 38);
 		panelBooks.add(textFieldTitle);
 		
 		lblAuthor = new JLabel("Author");
 		lblAuthor.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblAuthor.setBounds(43, 261, 80, 38);
+		lblAuthor.setBounds(40, 215, 80, 38);
 		panelBooks.add(lblAuthor);
 		
 		textFieldAuthor = new JTextField();
 		textFieldAuthor.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldAuthor.setColumns(10);
-		textFieldAuthor.setBounds(133, 260, 280, 38);
+		textFieldAuthor.setBounds(130, 214, 280, 38);
 		panelBooks.add(textFieldAuthor);
 		
 		lblType = new JLabel("Type");
 		lblType.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblType.setBounds(43, 308, 60, 38);
+		lblType.setBounds(40, 262, 60, 38);
 		panelBooks.add(lblType);
 		
 		textFieldType = new JTextField();
 		textFieldType.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldType.setColumns(10);
-		textFieldType.setBounds(113, 308, 300, 38);
+		textFieldType.setBounds(110, 262, 300, 38);
 		panelBooks.add(textFieldType);
 		
 		lblCategory = new JLabel("Category");
 		lblCategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblCategory.setBounds(43, 356, 103, 38);
+		lblCategory.setBounds(40, 310, 103, 38);
 		panelBooks.add(lblCategory);
 		
 		textFieldCategory = new JTextField();
 		textFieldCategory.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldCategory.setColumns(10);
-		textFieldCategory.setBounds(156, 356, 257, 38);
+		textFieldCategory.setBounds(153, 310, 257, 38);
 		panelBooks.add(textFieldCategory);
 		
 		lblCurrentquantity = new JLabel("CurrentQuantity");
 		lblCurrentquantity.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblCurrentquantity.setBounds(43, 404, 186, 38);
+		lblCurrentquantity.setBounds(40, 358, 186, 38);
 		panelBooks.add(lblCurrentquantity);
 		
 		textFieldCurrentQ = new JTextField();
 		textFieldCurrentQ.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldCurrentQ.setColumns(10);
-		textFieldCurrentQ.setBounds(239, 404, 174, 38);
+		textFieldCurrentQ.setBounds(236, 358, 174, 38);
 		panelBooks.add(textFieldCurrentQ);
 		
 		lblTotalquantity = new JLabel("TotalQuantity");
 		lblTotalquantity.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblTotalquantity.setBounds(43, 452, 186, 38);
+		lblTotalquantity.setBounds(40, 406, 186, 38);
 		panelBooks.add(lblTotalquantity);
 		
 		textFieldTotalQ = new JTextField();
 		textFieldTotalQ.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldTotalQ.setColumns(10);
-		textFieldTotalQ.setBounds(239, 452, 174, 38);
+		textFieldTotalQ.setBounds(236, 406, 174, 38);
 		panelBooks.add(textFieldTotalQ);
 		
 		lblPublisher = new JLabel("Publisher");
 		lblPublisher.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblPublisher.setBounds(43, 500, 124, 38);
+		lblPublisher.setBounds(40, 454, 124, 38);
 		panelBooks.add(lblPublisher);
 		
 		textFieldPublisher = new JTextField();
 		textFieldPublisher.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldPublisher.setColumns(10);
-		textFieldPublisher.setBounds(156, 500, 257, 38);
+		textFieldPublisher.setBounds(153, 454, 257, 38);
 		panelBooks.add(textFieldPublisher);
 		
 		lblPublishyear = new JLabel("PublishYear");
 		lblPublishyear.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblPublishyear.setBounds(43, 548, 137, 38);
+		lblPublishyear.setBounds(40, 502, 137, 38);
 		panelBooks.add(lblPublishyear);
 		
 		textFieldPulishYear = new JTextField();
 		textFieldPulishYear.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldPulishYear.setColumns(10);
-		textFieldPulishYear.setBounds(190, 548, 223, 38);
+		textFieldPulishYear.setBounds(187, 502, 223, 38);
 		panelBooks.add(textFieldPulishYear);
 		
 		lblGenre = new JLabel("Genre");
 		lblGenre.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
-		lblGenre.setBounds(43, 596, 80, 38);
+		lblGenre.setBounds(40, 550, 80, 38);
 		panelBooks.add(lblGenre);
 		
 		textFieldGenre = new JTextField();
 		textFieldGenre.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
 		textFieldGenre.setColumns(10);
-		textFieldGenre.setBounds(133, 596, 280, 38);
+		textFieldGenre.setBounds(130, 550, 280, 38);
 		panelBooks.add(textFieldGenre);
 		
 		JButton buttonSearchBook = new JButton("Search");
@@ -349,16 +338,115 @@ public class MainFrame extends JFrame {
 		panelBooks.add(buttonSearchBook);
 		
 		JButton buttonAddBook = new JButton("Add");
+		buttonAddBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Book book=new Book();
+				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				book.setTitle(textFieldTitle.getText());
+				book.setDescription(textFieldDescription.getText());
+				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
+				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
+				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
+				book.setTypeName(textFieldType.getText());
+//				category				
+				
+				String authorStr=textFieldAuthor.getText();
+				String publisherStr=textFieldPublisher.getText();
+				String genreStr=textFieldGenre.getText();
+				String[] authors=authorStr.split(",");
+				String[] publishers=publisherStr.split(",");
+				String[] genres=genreStr.split(",");
+				ArrayList<Author> authorList=new ArrayList<Author>();
+				ArrayList<Publisher> publisherList=new ArrayList<Publisher>();
+				ArrayList<SearchGenre> genreList=new ArrayList<SearchGenre>();
+				for (String str:authors){
+					Author author=new Author();
+					author.setName(str);
+					authorList.add(author);
+				}
+				for (String str:publishers){
+					Publisher publisher=new Publisher();
+					publisher.setName(str);
+					publisherList.add(publisher);
+				}
+				for (String str:genres){
+					SearchGenre genre=new SearchGenre();
+					genre.setName(str);
+					genreList.add(genre);
+				}
+				book.setAuthor(authorList);
+				book.setPublisher(publisherList);
+				book.setSearchGenre(genreList);
+				
+				BookHelper helper=new BookHelper();
+				helper.addBook(book);		
+				JOptionPane.showMessageDialog(null, "Add book with isbn "+book.getIsbn(), "Add book", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonAddBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonAddBook.setBounds(506, 259, 160, 40);
 		panelBooks.add(buttonAddBook);
 		
 		JButton buttonUpdateBook = new JButton("Update");
+		buttonUpdateBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Book book=new Book();
+				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				book.setTitle(textFieldTitle.getText());
+				book.setDescription(textFieldDescription.getText());
+				book.setCurrentQuantity(Integer.parseInt(textFieldCurrentQ.getText()));
+				book.setTotalQuantity(Integer.parseInt(textFieldTotalQ.getText()));
+				book.setPublishYear(Integer.parseInt(textFieldPulishYear.getText()));
+				book.setTypeName(textFieldType.getText());
+//				category				
+				
+				String authorStr=textFieldAuthor.getText();
+				String publisherStr=textFieldPublisher.getText();
+				String genreStr=textFieldGenre.getText();
+				String[] authors=authorStr.split(",");
+				String[] publishers=publisherStr.split(",");
+				String[] genres=genreStr.split(",");
+				ArrayList<Author> authorList=new ArrayList<Author>();
+				ArrayList<Publisher> publisherList=new ArrayList<Publisher>();
+				ArrayList<SearchGenre> genreList=new ArrayList<SearchGenre>();
+				for (String str:authors){
+					Author author=new Author();
+					author.setName(str);
+					authorList.add(author);
+				}
+				for (String str:publishers){
+					Publisher publisher=new Publisher();
+					publisher.setName(str);
+					publisherList.add(publisher);
+				}
+				for (String str:genres){
+					SearchGenre genre=new SearchGenre();
+					genre.setName(str);
+					genreList.add(genre);
+				}
+				book.setAuthor(authorList);
+				book.setPublisher(publisherList);
+				book.setSearchGenre(genreList);
+				
+				BookHelper helper=new BookHelper();
+				helper.updateBook(book);		
+				JOptionPane.showMessageDialog(null, "Update book with isbn "+book.getIsbn(), "Update book", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonUpdateBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonUpdateBook.setBounds(506, 354, 160, 40);
 		panelBooks.add(buttonUpdateBook);
 		
 		JButton buttonDeleteBook = new JButton("Delete");
+		buttonDeleteBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Book book=new Book();
+				book.setIsbn(Integer.parseInt(textFieldIsbn.getText()));
+				BookHelper helper=new BookHelper();
+				helper.deleteBook(book);		
+				JOptionPane.showMessageDialog(null, "Delete book with isbn "+book.getIsbn(), "Delete book", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonDeleteBook.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonDeleteBook.setBounds(506, 450, 160, 40);
 		panelBooks.add(buttonDeleteBook);
@@ -396,14 +484,43 @@ public class MainFrame extends JFrame {
 		panelBooks.add(textFieldPatron);
 		
 		JButton btnCheckout = new JButton("CheckOut");
+		btnCheckout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CheckOutHelper helper=new CheckOutHelper();
+				int isbn=Integer.parseInt(textFieldIsbn2.getText());
+				int patron=Integer.parseInt(textFieldPatron.getText());
+				int librarian=currentLibrarian.getIdNumber();
+				Date date=new Date();
+			}
+		});
 		btnCheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnCheckout.setBounds(850, 354, 160, 40);
 		panelBooks.add(btnCheckout);
 		
 		JButton btnReturn = new JButton("Return");
+		btnReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CheckOutHelper helper=new CheckOutHelper();
+				int isbn=Integer.parseInt(textFieldIsbn2.getText());
+				int patron=Integer.parseInt(textFieldPatron.getText());
+				int librarian=currentLibrarian.getIdNumber();
+				Date date=new Date();
+			}
+		});
 		btnReturn.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnReturn.setBounds(1081, 354, 160, 40);
 		panelBooks.add(btnReturn);
+		
+		lblDescription = new JLabel("Description");
+		lblDescription.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		lblDescription.setBounds(40, 598, 137, 38);
+		panelBooks.add(lblDescription);
+		
+		textFieldDescription = new JTextField();
+		textFieldDescription.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 24));
+		textFieldDescription.setColumns(10);
+		textFieldDescription.setBounds(183, 598, 483, 38);
+		panelBooks.add(textFieldDescription);
 		
 		JPanel panelManagement = new JPanel();
 		panelManagement.setLayout(null);
@@ -470,24 +587,75 @@ public class MainFrame extends JFrame {
 		textFieldPatronUnpaid.setBounds(200, 356, 213, 38);
 		panelManagement.add(textFieldPatronUnpaid);
 		
-		JButton buttonSearchPatron = new JButton("Search");
-		buttonSearchPatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonSearchPatron.setBounds(43, 450, 160, 40);
-		panelManagement.add(buttonSearchPatron);
+		JButton buttonSearchPatronByNum = new JButton("Search");
+		buttonSearchPatronByNum.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PatronHelper helper=new PatronHelper();
+				String keyword=textFieldCardNumber.getText();
+				ArrayList<Patron> results=helper.searchPatron("cardNumber", keyword);
+				if ((results!=null) && (!results.isEmpty())){
+					Patron patron=results.get(0);
+					textFieldPatronName.setText(patron.getName());
+					textFieldPatronPhone.setText(patron.getPhone()+"");
+					textFieldPatronAddress.setText(patron.getAddress());
+					textFieldPatronUnpaid.setText(patron.getUnpaidFees()+"");
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonSearchPatronByNum.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		buttonSearchPatronByNum.setBounds(43, 450, 160, 40);
+		panelManagement.add(buttonSearchPatronByNum);
 		
 		JButton buttonAddPatron = new JButton("Add");
+		buttonAddPatron.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Patron patron=new Patron();
+				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
+				patron.setName(textFieldPatronName.getText());
+				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText()));
+				patron.setAddress(textFieldPatronAddress.getText());
+				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText()));
+				PatronHelper helper=new PatronHelper();
+				helper.addPatron(patron);		
+				JOptionPane.showMessageDialog(null, "Add patron with card number "+patron.getCardNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonAddPatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonAddPatron.setBounds(250, 450, 160, 40);
 		panelManagement.add(buttonAddPatron);
 		
 		JButton buttonUpdatePatron = new JButton("Update");
+		buttonUpdatePatron.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Patron patron=new Patron();
+				patron.setCardNumber(Integer.parseInt(textFieldCardNumber.getText()));
+				patron.setName(textFieldLibName.getText());
+				patron.setPhone(Integer.parseInt(textFieldPatronPhone.getText()));
+				patron.setAddress(textFieldPatronAddress.getText());
+				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText()));
+				PatronHelper helper=new PatronHelper();
+				helper.updatePatron(patron.getCardNumber(), patron);		
+				JOptionPane.showMessageDialog(null, "Update patron with ID "+patron.getCardNumber(), "Update patron", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonUpdatePatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonUpdatePatron.setBounds(43, 519, 160, 40);
+		buttonUpdatePatron.setBounds(250, 519, 160, 40);
 		panelManagement.add(buttonUpdatePatron);
 		
 		JButton buttonDeletePatron = new JButton("Delete");
+		buttonDeletePatron.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PatronHelper helper=new PatronHelper();
+				int id=Integer.parseInt(textFieldCardNumber.getText());
+				helper.deletePatron(id);	
+				JOptionPane.showMessageDialog(null, "Delete patron with ID "+id, "Delete patron", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonDeletePatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonDeletePatron.setBounds(250, 519, 160, 40);
+		buttonDeletePatron.setBounds(250, 586, 160, 40);
 		panelManagement.add(buttonDeletePatron);
 		
 		JLabel lblPatronmanagement = new JLabel("PatronManagement");
@@ -522,24 +690,69 @@ public class MainFrame extends JFrame {
 		textFieldLibName.setBounds(941, 261, 300, 38);
 		panelManagement.add(textFieldLibName);
 		
-		JButton buttonSearchLib = new JButton("Search");
-		buttonSearchLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonSearchLib.setBounds(874, 450, 160, 40);
-		panelManagement.add(buttonSearchLib);
+		JButton buttonSearchLibId = new JButton("SearchByID");
+		buttonSearchLibId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				LibrarianHelper helper=new LibrarianHelper();
+				String keyword=textFieldLibId.getText();
+				ArrayList<Librarian> results=helper.searchLibrarian("idName", keyword);
+				if ((results!=null) && (!results.isEmpty())){
+					Librarian lib=results.get(0);
+					textFieldLibName.setText(lib.getName());
+					textFieldLibAddress.setText(lib.getAddress());
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonSearchLibId.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		buttonSearchLibId.setBounds(874, 450, 160, 40);
+		panelManagement.add(buttonSearchLibId);
 		
 		JButton buttonAddLib = new JButton("Add");
+		buttonAddLib.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Librarian lib=new Librarian();
+				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
+				lib.setName(textFieldLibName.getText());
+				lib.setAddress(textFieldLibAddress.getText());
+				LibrarianHelper helper=new LibrarianHelper();
+				helper.addLibrarian(lib);		
+				JOptionPane.showMessageDialog(null, "Add librarian with ID "+lib.getIdNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonAddLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		buttonAddLib.setBounds(1081, 450, 160, 40);
 		panelManagement.add(buttonAddLib);
 		
 		JButton buttonUpdateLib = new JButton("Update");
+		buttonUpdateLib.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Librarian lib=new Librarian();
+				lib.setIdNumber(Integer.parseInt(textFieldLibId.getText()));
+				lib.setName(textFieldLibName.getText());
+				lib.setAddress(textFieldLibAddress.getText());
+				LibrarianHelper helper=new LibrarianHelper();
+				helper.updateLibrarian(lib.getIdNumber(), lib);		
+				JOptionPane.showMessageDialog(null, "Update librarian with ID "+lib.getIdNumber(), "Update librarian", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonUpdateLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonUpdateLib.setBounds(874, 519, 160, 40);
+		buttonUpdateLib.setBounds(1081, 519, 160, 40);
 		panelManagement.add(buttonUpdateLib);
 		
 		JButton buttonDeleteLib = new JButton("Delete");
+		buttonDeleteLib.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LibrarianHelper helper=new LibrarianHelper();
+				int id=Integer.parseInt(textFieldLibId.getText());
+				helper.deleteLibrarian(id);	
+				JOptionPane.showMessageDialog(null, "Delete librarian with ID "+id, "Delete librarian", JOptionPane.PLAIN_MESSAGE);
+			}
+		});
 		buttonDeleteLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
-		buttonDeleteLib.setBounds(1081, 519, 160, 40);
+		buttonDeleteLib.setBounds(1081, 586, 160, 40);
 		panelManagement.add(buttonDeleteLib);
 		
 		JLabel lblAddressLib = new JLabel("Address");
@@ -552,6 +765,48 @@ public class MainFrame extends JFrame {
 		textFieldLibAddress.setColumns(10);
 		textFieldLibAddress.setBounds(941, 356, 300, 38);
 		panelManagement.add(textFieldLibAddress);
+		
+		JButton buttonSearchLibName = new JButton("SearchByName");
+		buttonSearchLibName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LibrarianHelper helper=new LibrarianHelper();
+				String keyword=textFieldLibId.getText();
+				ArrayList<Librarian> results=helper.searchLibrarian("Name", keyword);
+				if ((results!=null) && (!results.isEmpty())){
+					Librarian lib=results.get(0);
+					textFieldLibName.setText(lib.getName());
+					textFieldLibAddress.setText(lib.getAddress());
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonSearchLibName.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		buttonSearchLibName.setBounds(874, 519, 160, 40);
+		panelManagement.add(buttonSearchLibName);
+		
+		buttonSearchPatronByName = new JButton("SearchByName");
+		buttonSearchPatronByName.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PatronHelper helper=new PatronHelper();
+				String keyword=textFieldPatronName.getText();
+				ArrayList<Patron> results=helper.searchPatron("name", keyword);
+				if ((results!=null) && (!results.isEmpty())){
+					Patron patron=results.get(0);
+					textFieldCardNumber.setText(patron.getCardNumber()+"");
+					textFieldPatronPhone.setText(patron.getPhone()+"");
+					textFieldPatronAddress.setText(patron.getAddress());
+					textFieldPatronUnpaid.setText(patron.getUnpaidFees()+"");
+				}	
+				else{
+					JOptionPane.showMessageDialog(null, "No result found!", "Error",JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		buttonSearchPatronByName.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		buttonSearchPatronByName.setBounds(43, 519, 160, 40);
+		panelManagement.add(buttonSearchPatronByName);
 		
 		JPanel panelReport = new JPanel();
 		tabbedPaneMain.addTab("Report", null, panelReport, null);
