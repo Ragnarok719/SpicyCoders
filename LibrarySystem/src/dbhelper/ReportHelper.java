@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import data.Book;
 import data.CheckOut;
-import data.HasPublisher;
 import data.Patron;
 
 public class ReportHelper {
@@ -557,6 +555,60 @@ public class ReportHelper {
 			}
 		
 		return superPatrons;
+	}
+	
+	/**
+	 * Gets average book checkout time for each patrons that have the largest unpaid fees.
+	 * @return a map of names of patrons who have largest unpaid fees with their average checkout time in days
+	 */
+	public Map<String, Double> getTimeForLargestUnpaid() {
+		Connection connect = null;
+		Statement statement = null;
+		ResultSet resultSet = null;
+		Map<String, Double> ret = new HashMap<String, Double>();
+		
+		try {
+			// First connect to the database
+			connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
+			statement = connect.createStatement();
+			
+			resultSet = statement.executeQuery("SELECT avg(TIMESTAMPDIFF(SECOND, start, end)), "
+					+ "p.name FROM Patron p, Checkout c WHERE p.cardNumber = c.cardNumber "
+					+ "GROUP BY p.cardNumber, p.name, p.unpaidFees Having p.unpaidFees = "
+					+ "(SELECT max(unpaidFees) FROM Patron)");
+			
+			while(resultSet.next()) {
+				long oneDay = 1 * 24 * 60 * 60;	
+				double days = ((double) resultSet.getInt(1))/oneDay;
+				ret.put(resultSet.getString(2), days);
+			}
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+			finally
+			{
+				try {
+
+					if(connect != null){
+						connect.close();
+					}
+					
+					if(statement != null){
+						statement.close();
+					}
+					
+					if(resultSet != null){
+						resultSet.close();
+					}
+					
+				} catch (Exception e) {	
+					
+				}
+			}
+		return ret;
+		
 	}
 	
 	/**

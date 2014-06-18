@@ -1,6 +1,6 @@
 package dbhelper;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -198,5 +198,12 @@ public class ReportHelperTest {
 		superPatrons = rh.getSuperPatrons(isbnArrayE);
 		assertTrue(superPatrons.size() == 0);
 		
+	}
+	
+	@Test
+	public void testGetTimeForLargestUnpaid() {
+		Map<String, Double> m = rh.getTimeForLargestUnpaid();
+		assertTrue(m.size() == 1);
+		assertTrue(Math.abs(m.get("Norman Doorman")*24*60*60 - 1814400d) < 1);
 	}
 }
