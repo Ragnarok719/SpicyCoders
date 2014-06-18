@@ -14,7 +14,7 @@ import data.CheckOut;
 import data.HasPublisher;
 import data.Patron;
 
-public class reportHelper {
+public class ReportHelper {
 
 	/**
 	 * Method getAllCheckOuts returns a collection of checkouts. Each checkout ISBN matches

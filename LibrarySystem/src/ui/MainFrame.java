@@ -1013,9 +1013,35 @@ public class MainFrame extends JFrame {
 		textAreaReport.setEditable(false);
 		scrollPaneReport.setViewportView(textAreaReport);
 		
-		JButton btnAllcheckout = new JButton("AllCheckOut");
+		JButton btnAllcheckout = new JButton("AllCheckOuts");
+		btnAllcheckout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReportHelper helper=new ReportHelper();
+				
+			}
+		});
 		btnAllcheckout.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
 		btnAllcheckout.setBounds(35, 539, 160, 40);
 		panelReport.add(btnAllcheckout);
+		
+		JButton btnAlloverduecos = new JButton("AllOverdueCOs");
+		btnAlloverduecos.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnAlloverduecos.setBounds(226, 539, 160, 40);
+		panelReport.add(btnAlloverduecos);
+		
+		JButton btnGenrecounts = new JButton("GenreCounts");
+		btnGenrecounts.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnGenrecounts.setBounds(421, 539, 160, 40);
+		panelReport.add(btnGenrecounts);
+		
+		JButton btnToppublisher = new JButton("TopPublishers");
+		btnToppublisher.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnToppublisher.setBounds(618, 539, 160, 40);
+		panelReport.add(btnToppublisher);
+		
+		JButton btnOutofstockbooks = new JButton("OutOfStockBooks");
+		btnOutofstockbooks.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
+		btnOutofstockbooks.setBounds(817, 539, 160, 40);
+		panelReport.add(btnOutofstockbooks);
 	}
 }

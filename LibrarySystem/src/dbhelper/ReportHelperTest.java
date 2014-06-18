@@ -17,7 +17,7 @@ import data.Patron;
 public class ReportHelperTest {
 
 	CheckOutHelper ch;
-	reportHelper rh;
+	ReportHelper rh;
 	BookHelper bh;
 
 	Book b;
@@ -29,7 +29,7 @@ public class ReportHelperTest {
 	@Before
 	public void setUp() throws Exception {
 
-		rh = new reportHelper();
+		rh = new ReportHelper();
 		ch = new CheckOutHelper();
 		bh = new BookHelper();
 		
