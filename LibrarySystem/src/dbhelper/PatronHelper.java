@@ -22,11 +22,7 @@ public class PatronHelper {
 		// If p is null, do nothing
 		if (p == null)
 			return;
-		
-		// If cardNumber is outside of boundaries, do nothing
-		if (p.getCardNumber() < 100000 || p.getCardNumber() > 999999)
-			return;
-		
+
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			String insert = "INSERT INTO Patron(cardNumber, name, phone, address, unpaidFees) VALUES (?, ?, ?, ?, ?)";
@@ -127,11 +123,7 @@ public class PatronHelper {
 		try {			
 			conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/librarysystem?user=admin&password=123456");
 			st=conn.createStatement();
-			
-			// If cardNumber is outside of boundaries, do nothing
-			if (p.getCardNumber() < 100000 || p.getCardNumber() > 999999)
-				return;
-			
+
 			// Update all attributes
 			st.executeUpdate("UPDATE Patron SET name = '" + p.getName() + "' WHERE cardNumber = '" + cardNumber + "'");
 			st.executeUpdate("UPDATE Patron SET phone = '" + p.getPhone() + "' WHERE cardNumber = '" + cardNumber + "'");

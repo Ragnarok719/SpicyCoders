@@ -903,8 +903,13 @@ public class MainFrame extends JFrame {
 				patron.setAddress(textFieldPatronAddress.getText().trim());
 				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText().trim()));
 				PatronHelper helper=new PatronHelper();
-				helper.addPatron(patron);		
-				JOptionPane.showMessageDialog(null, "Add patron with card number "+patron.getCardNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+				// check constraint
+				if (patron.getCardNumber() >= 100000 && patron.getCardNumber() <= 999999) {					
+					helper.addPatron(patron);		
+					JOptionPane.showMessageDialog(null, "Add patron with card number "+patron.getCardNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Card Number must be within the ranges 100000-999999!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		buttonAddPatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -922,8 +927,13 @@ public class MainFrame extends JFrame {
 				patron.setAddress(textFieldPatronAddress.getText().trim());
 				patron.setUnpaidFees(Integer.parseInt(textFieldPatronUnpaid.getText().trim()));
 				PatronHelper helper=new PatronHelper();
-				helper.updatePatron(patron.getCardNumber(), patron);		
-				JOptionPane.showMessageDialog(null, "Update patron with ID "+patron.getCardNumber(), "Update patron", JOptionPane.PLAIN_MESSAGE);
+				// check constraint
+				if (patron.getCardNumber() >= 100000 && patron.getCardNumber() <= 999999) {
+					helper.updatePatron(patron.getCardNumber(), patron);	
+					JOptionPane.showMessageDialog(null, "Update patron with ID "+patron.getCardNumber(), "Update patron", JOptionPane.PLAIN_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "Card Number must be within the ranges 100000-999999!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		buttonUpdatePatron.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -1006,8 +1016,13 @@ public class MainFrame extends JFrame {
 				lib.setName(textFieldLibName.getText().trim());
 				lib.setAddress(textFieldLibAddress.getText().trim());
 				LibrarianHelper helper=new LibrarianHelper();
-				helper.addLibrarian(lib);		
-				JOptionPane.showMessageDialog(null, "Add librarian with ID "+lib.getIdNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+				// check constraint
+				if (lib.getIdNumber() >= 1000 && lib.getIdNumber() <= 9999) {
+					helper.addLibrarian(lib);		
+					JOptionPane.showMessageDialog(null, "Add librarian with ID "+lib.getIdNumber(), "Add librarian", JOptionPane.PLAIN_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "idNumber must be within the ranges 1000-9999!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		buttonAddLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
@@ -1023,8 +1038,13 @@ public class MainFrame extends JFrame {
 				lib.setName(textFieldLibName.getText().trim());
 				lib.setAddress(textFieldLibAddress.getText().trim());
 				LibrarianHelper helper=new LibrarianHelper();
-				helper.updateLibrarian(lib.getIdNumber(), lib);		
-				JOptionPane.showMessageDialog(null, "Update librarian with ID "+lib.getIdNumber(), "Update librarian", JOptionPane.PLAIN_MESSAGE);
+				// check constraint
+				if (lib.getIdNumber() >= 1000 && lib.getIdNumber() <= 9999) {
+					helper.updateLibrarian(lib.getIdNumber(), lib);		
+					JOptionPane.showMessageDialog(null, "Update librarian with ID "+lib.getIdNumber(), "Update librarian", JOptionPane.PLAIN_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "idNumber must be within the ranges 100-9999!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		buttonUpdateLib.setFont(new Font("Microsoft JhengHei UI", Font.PLAIN, 15));
