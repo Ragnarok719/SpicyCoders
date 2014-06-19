@@ -435,7 +435,8 @@ public class MainFrame extends JFrame {
 				String category=textFieldCategory.getText();
 				CategoryHelper chelper=new CategoryHelper();
 				Category cate=chelper.getCategory(category);
-				book.setIdNumber(cate.getIdNumber());
+				if(cate != null)
+					book.setIdNumber(cate.getIdNumber());
 				
 				String authorStr=textFieldAuthor.getText();
 				String publisherStr=textFieldPublisher.getText();
@@ -492,7 +493,8 @@ public class MainFrame extends JFrame {
 				String category=textFieldCategory.getText();
 				CategoryHelper chelper=new CategoryHelper();
 				Category cate=chelper.getCategory(category);
-				book.setIdNumber(cate.getIdNumber());
+				if(cate != null)
+					book.setIdNumber(cate.getIdNumber());
 				
 				String authorStr=textFieldAuthor.getText();
 				String publisherStr=textFieldPublisher.getText();
